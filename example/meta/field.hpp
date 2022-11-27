@@ -1,7 +1,8 @@
 #include <meta/field.hpp>
 #include <meta/field_utility.hpp>
+#include <meta/field_set.hpp>
 
 static constexpr ampersand::meta::field<int, ampersand::meta::attribute_set<>> Field("Hello World");
 
-void example_meta_add_attribute();
-void example_meta_constexpr    ();
+void meta_add_attribute();
+void meta_static_assert();

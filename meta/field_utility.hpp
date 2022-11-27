@@ -4,38 +4,34 @@
 
 namespace ampersand::meta {
 	template <typename... T>
-	struct __push_field_attribute;
+	struct push_attribute;
 
-	template <typename T, typename FieldT, typename... FieldAttr>
-	struct __push_field_attribute<T, const field<FieldT, attribute_set<FieldAttr...>>> {
-		using type = field<FieldT, attribute_set<FieldAttr..., T>>;
-	};
+	template <typename... T>
+	struct pop_attribute;
 
-	template <typename T, typename FieldT, typename... FieldAttr>
-	struct __push_field_attribute<T, field<FieldT, attribute_set<FieldAttr...>>> {
-		using type = field<FieldT, attribute_set<FieldAttr..., T>>;
+	template <typename Attr, typename FieldT, typename... FieldAttr>
+	struct push_attribute
+				<Attr,
+				 field<FieldT, attribute_set<FieldAttr...>>> {
+		using type 
+			= field<FieldT,
+					type_table::push_back<Attr, attribute_set<FieldAttr...>>>;
 	};
 
 	template <typename... T>
-	using  push_field_attribute_t = typename __push_field_attribute<T...>::type;
+	using push_attribute_t = typename push_attribute<T...>::type;
 
 	template <typename Attr, typename FieldT, typename... FieldAttr>
-	constexpr const push_field_attribute_t<Attr, field<FieldT, attribute_set<FieldAttr...>>>&
-		push_field_attribute
-			(const field<FieldT, attribute_set<FieldAttr...>>& pField) {
-		return 
-			field<FieldT,
-				  push_attribute_t
-				  	<Attr, attribute_set<FieldAttr...>>>(pField);
-	}
+	struct pop_attribute
+				<Attr,
+				 field<FieldT, attribute_set<FieldAttr...>>> {
+		using type 
+			= field<FieldT, 
+					type_table::pop_back<Attr, attribute_set<FieldAttr...>>>;
+	};
 
-	template <typename Attr, typename FieldT, typename... FieldAttr>
-	constexpr auto
-		pop_field_attribute
-			(const field<FieldT, attribute_set<FieldAttr...>>& pField) {
-		return
-			field<FieldT,
-				  pop_attribute_t
-				  	<attribute_set<FieldAttr...>>>(pField);
-	}
+	template <typename... T>
+	using pop_attribute_t = typename pop_attribute<T...>::type;
+
+	
 }
