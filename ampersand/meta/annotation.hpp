@@ -24,4 +24,9 @@ namespace ampersand::meta {
     inline constexpr bool have_annotation
         = boost::mp11::mp_find<AnnotationSet, Annotation>::value
                 != boost::mp11::mp_size<AnnotationSet>::value;
+
+    template <typename Predicate, typename AnnotationSet>
+    inline constexpr bool have_specific_annotation
+        = boost::mp11::mp_find_if<AnnotationSet, Predicate>::value
+                != boost::mp11::mp_size<AnnotationSet>::value;
 }

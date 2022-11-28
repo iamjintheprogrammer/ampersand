@@ -6,6 +6,6 @@ namespace ampersand::proto::annotation {
 }
 
 namespace ampersand::proto::attribute {
-    template <typename FieldT>
+    template <typename FieldT = std::size_t>
     using field = meta::attribute<FieldT, meta::annotation_set<proto::annotation::field>>;
 }

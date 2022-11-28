@@ -58,8 +58,10 @@ namespace ampersand::proto {
     class buffer<meta::meta_type<Attr...>> {
     public:
         using raw_buffer_type = char[buffer_size_v<meta::meta_type<Attr...>>];
-        buffer(const meta::meta_type<Attr...>&) : _M_Base() {}
-        buffer()                                            {}
+        using meta_type       = meta::meta_type<Attr...>;
+
+        buffer(const meta_type&) : _M_Base() {}
+        buffer()                             {}
 
         template <typename Attribute>
         constexpr typename Attribute::attribute_type&
