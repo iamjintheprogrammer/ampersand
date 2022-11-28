@@ -6,5 +6,4 @@ project(ampersand
 set                (CMAKE_CXX_STANDARD 20)
 include_directories(${CMAKE_SOURCE_DIR})
 
-add_subdirectory(example/type_table)
-add_subdirectory(example/meta)
+add_subdirectory(example/proto)
