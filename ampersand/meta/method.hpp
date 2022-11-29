@@ -4,12 +4,14 @@
 #include <ampersand/meta/attribute.hpp>
 
 namespace ampersand::meta {
-    template <auto Method, typename AnnotationSet>
+    template <auto Method, typename... Annotations>
     struct method {
         static constexpr auto value = Method;
-        using annotations           = AnnotationSet;
+        using annotations           = boost::mp11::mp_list<Annotations...>;
     };
 
     template <typename... Methods>
-    using traits = boost::mp11::mp_list<Methods...>;
+    struct trait {
+        using type = boost::mp11::mp_list<Methods...>;
+    };
 }

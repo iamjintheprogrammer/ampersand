@@ -7,7 +7,8 @@ int main() {
 			{ ampersand::meta::make_meta_type
 				(ampersand::proto::sent_size	<>,
 				 ampersand::proto::received_size<>,
-				 ampersand::proto::field		<>)};
+				 ampersand::proto::field		<>,
+				 ampersand::proto::v4)};
 
 	std::cout << ampersand::proto::buffer_size_v<decltype(Buffer)::meta_type> << std::endl;
 	std::cout << &Buffer													  << std::endl

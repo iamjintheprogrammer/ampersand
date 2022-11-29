@@ -2,12 +2,15 @@
 #include <ampersand/meta/annotation.hpp>
 
 namespace ampersand::meta {
-    template <typename... AnyType>
-    struct attribute;
-
-    template <typename AttrT, typename... AnyAnnotation>
-    struct attribute<AttrT, annotation_set<AnyAnnotation...>> {
+    template <typename AttrT, typename... Annotation>
+    struct attribute {
         using attribute_type = AttrT;
-        using annotations    = annotation_set<AnyAnnotation...>;
+        using annotations    = boost::mp11::mp_list<Annotation...>;
+    };
+
+    template <typename AttrT>
+    struct attribute<AttrT> {
+        using attribute_type = AttrT;
+        using annotations    = boost::mp11::mp_list<>;
     };
 }

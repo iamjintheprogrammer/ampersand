@@ -2,6 +2,7 @@
 #include <ampersand/define_constexpr.hpp>
 
 #include <ampersand/meta/meta.hpp>
+#include <ampersand/meta/utility/contains.hpp>
 #include <ampersand/proto/field.hpp>
 
 namespace ampersand::proto {
@@ -12,7 +13,7 @@ namespace ampersand::proto {
     struct buffer_size<meta::meta_type<Attr...>> {
         static constexpr std::size_t value = []() { 
             return
-                (((meta::have_annotation<proto::annotation::field, typename Attr::annotations>)
+                (((meta::utility::contains_v<proto::annotation::field, typename Attr::annotations>)
                     ? sizeof(typename Attr::attribute_type)
                         : 0) + ...);
         }();
@@ -29,7 +30,7 @@ namespace ampersand::proto {
         static constexpr std::size_t value
             = (std::is_same_v<Target, Attr>)
                 ? 0
-                : ((meta::have_annotation<proto::annotation::field, typename Attr::annotations>)
+                : ((meta::utility::contains_v<proto::annotation::field, typename Attr::annotations>)
                     ? (__buffer_offset<Target, AttributeSet...>::value + sizeof(typename Attr::attribute_type))
                     :  __buffer_offset<Target, AttributeSet...>::value);
     };
