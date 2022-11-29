@@ -1,4 +1,7 @@
 #pragma once
+#include <cstdint>
+#include <cstddef>
+
 #include <ampersand/meta/utility/trait.hpp>
 #include <ampersand/meta/utility/trait_concept.hpp>
 

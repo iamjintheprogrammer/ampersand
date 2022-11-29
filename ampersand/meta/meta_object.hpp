@@ -6,7 +6,7 @@ namespace ampersand::meta {
     class meta_object {
     public:
         using body_type            = BodyT;
-        using attribute_field_type = body_type::attribute_field_type<MetaType>;
+        using attribute_field_type = typename body_type::attribute_field_type<MetaType>;
 
     public:
         meta_object() = default;
