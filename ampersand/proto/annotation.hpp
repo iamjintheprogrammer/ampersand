@@ -14,4 +14,7 @@ namespace ampersand::proto {
             minimum_size = Min,
             maximum_size = Max;
     };
+
+    struct receive_size : meta::annotation {};
+    struct    send_size : meta::annotation {};
 }

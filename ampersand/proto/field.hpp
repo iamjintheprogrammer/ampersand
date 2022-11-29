@@ -10,4 +10,9 @@ namespace ampersand::proto::fields {
     using remapped_field   = meta::attribute<FieldT, proto::field, proto::remap_field<RemapT>>;
     template <typename FieldT>
     using deprecated_field = meta::attribute<FieldT, proto::field, proto::deprecated_field>;
+
+    template <typename FieldT>
+    using received_size_field = meta::attribute<FieldT, proto::field, proto::receive_size>;
+    template <typename FieldT>
+    using send_size_field     = meta::attribute<FieldT, proto::field, proto::send_size>;
 }
