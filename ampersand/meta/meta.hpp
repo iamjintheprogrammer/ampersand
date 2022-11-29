@@ -6,6 +6,8 @@ namespace ampersand::meta {
     template <concepts::attribute... Attributes>
     struct meta_type {
         using type = boost::mp11::mp_list<Attributes...>;
+        constexpr meta_type(Attributes...) {}
+        constexpr meta_type()              {}
     };
 
     template <concepts::attribute... Attributes>

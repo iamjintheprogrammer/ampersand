@@ -1,14 +1,31 @@
 #pragma once
-#include <ampersand/meta/meta.hpp>
+#include <ampersand/meta/meta_object_base.hpp>
 
 namespace ampersand::meta {
-    template <typename BodyT, typename MetaType>
-    class meta_object {
+    template <typename... AnyType>
+    class meta_object;
+
+    template <typename BodyT, concepts::attribute... AttrT> 
+    class meta_object     <BodyT, meta_type<AttrT...>> 
+        : meta_object_base<BodyT, meta_type<AttrT...>> {
+        using base_type = meta_object_base<BodyT, meta_type<AttrT...>>;
     public:
-        using body_type            = BodyT;
-        using attribute_field_type = typename body_type::attribute_field_type<MetaType>;
+        using body_type            = typename base_type::body_type;
+        using attribute_field_type = typename base_type::attribute_field_type;
 
     public:
-        meta_object() = default;
+        meta_object(BodyT, meta_type<AttrT...>) : base_type() {}
+        meta_object()                           : base_type() {}
+
+    public:
+        attribute_field_type& attribute_field() { 
+            return this->_M_Base;
+        }
+        
+        template <typename Attribute>
+        auto& operator[](Attribute) { return this->_M_Get(Attribute{}); }
     };
+
+    template <typename BodyT, typename MetaType>
+    meta_object(BodyT, MetaType)->meta_object<BodyT, MetaType>;
 }

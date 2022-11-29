@@ -1,17 +1,19 @@
-#include <ampersand/proto/proto.hpp>
 #include <iostream>
 
-int main() {
-	ampersand::proto::buffer 
-		Buffer
-			{ ampersand::meta::make_meta_type
-				(ampersand::proto::sent_size	<>,
-				 ampersand::proto::received_size<>,
-				 ampersand::proto::field		<>,
-				 ampersand::proto::v4)};
+#include <ampersand/proto/field.hpp>
+#include <ampersand/proto/annotation.hpp>
+#include <ampersand/proto/annotation_traits.hpp>
 
-	std::cout << ampersand::proto::buffer_size_v<decltype(Buffer)::meta_type> << std::endl;
-	std::cout << &Buffer													  << std::endl
-			  << &Buffer[ampersand::proto::sent_size    <>]					  << std::endl
-			  << &Buffer[ampersand::proto::received_size<>]					  << std::endl;
+#include <ampersand/proto/buffer.hpp>
+#include <ampersand/proto/body.hpp>
+
+using remap_field = ampersand::proto::fields::remapped_field<int, int64_t>;
+using       field = ampersand::proto::fields::field		    <int>;
+
+int main() {
+	ampersand::proto::buffer<remap_field, field> Buffer;
+
+	std::cout << sizeof(Buffer) << std::endl;
+	Buffer[field{}] = 5;
+	std::cout << Buffer[field{}] << std::endl;
 }

@@ -51,6 +51,6 @@ namespace ampersand::meta::body {
         static constexpr std::size_t value = 0;
     };
 
-    template <typename T, typename... AttrT>
-    inline constexpr std::size_t __raw_offset_v = __raw_offset<T, AttrT...>::value;
+    template <typename T, typename MetaType>
+    inline constexpr std::size_t __raw_offset_v = __raw_offset<T, MetaType>::value;
 }

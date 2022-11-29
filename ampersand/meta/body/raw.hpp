@@ -18,5 +18,14 @@ namespace ampersand::meta::body {
 
         template <typename MetaType>
         using attribute_field_type = typename attribute_field<MetaType>::type;
+
+    public:
+        template <typename FieldT, typename AttrT, typename MetaT>
+        static auto& get(FieldT&& pField, AttrT, MetaT) {
+            return
+                *reinterpret_cast<typename AttrT::attribute_type*>
+                    (reinterpret_cast<std::uint8_t*>(pField) 
+                        + __raw_offset_v<AttrT, MetaT>);
+        }
     };
 }
