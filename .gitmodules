@@ -1,0 +1,6 @@
+[submodule "submodules"]
+	path = submodules
+	url = https://github.com/boostorg/mp11
+[submodule "submodule/mp11"]
+	path = submodule/mp11
+	url = https://github.com/boostorg/mp11
