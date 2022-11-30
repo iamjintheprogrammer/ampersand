@@ -14,6 +14,8 @@ include_directories(${CMAKE_SOURCE_DIR}/submodule/mp11/include)
 add_subdirectory(ampersand/proto)
 add_subdirectory(ampersand/meta)
 
+add_subdirectory(ampersand/extension/mysql)
+
 if(BUILD_EXAMPLES)
         add_subdirectory(example/proto)
         add_subdirectory(example/meta)

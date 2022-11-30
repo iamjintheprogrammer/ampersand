@@ -7,4 +7,11 @@
 namespace ampersand::proto {
     template <typename... Attributes>
     using buffer = meta::meta_object<proto::buffer_body, meta::meta_type<Attributes...>>;
+
+   template <typename... Attributes>
+   constexpr auto make_buffer(Attributes&&...) {
+       return buffer
+           <std::remove_const_t
+                <std::remove_reference_t<Attributes>>...>{};
+   }
 }

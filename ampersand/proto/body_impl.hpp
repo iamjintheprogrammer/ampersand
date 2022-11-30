@@ -9,7 +9,7 @@ namespace ampersand::proto {
     template <typename AttrT, typename... AttrRemaining>
     struct __buffer_body_size<AttrT, AttrRemaining...> {
         static constexpr std::size_t value = []()->std::size_t {
-                if constexpr (!has_field_annotation<AttrT>::value)
+                if constexpr (!meta::utility::has_annotation<AttrT, is_field>::value)
                     return __buffer_body_size<AttrRemaining...>::value;
                 else
                     return 
@@ -21,7 +21,7 @@ namespace ampersand::proto {
     template <typename AttrT>
     struct __buffer_body_size<AttrT> {
         static constexpr std::size_t value = []()->std::size_t {
-                if constexpr (!has_field_annotation<AttrT>::value)
+                if constexpr (!meta::utility::has_annotation<AttrT, is_field>::value)
                     return 0;
                 else
                     return 
@@ -37,7 +37,7 @@ namespace ampersand::proto {
         static constexpr std::size_t value = []()->std::size_t {
                 if constexpr (std::is_same_v<T, AttrT>)
                     return 0;
-                if constexpr (!has_field_annotation<AttrT>::value)
+                if constexpr (!meta::utility::has_annotation<AttrT, is_field>::value)
                     return __buffer_offset<T, meta::meta_type<AttrRemaining...>>::value;
                 else
                     return 

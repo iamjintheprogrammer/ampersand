@@ -2,7 +2,7 @@
 #include <ampersand/meta/meta.hpp>
 
 namespace ampersand::meta {
-    template <typename BodyT, typename MetaType>
+    template <typename BodyT, typename MetaType, typename... ActionT>
     class meta_object_base {
     protected:
         using body_type            = BodyT;
@@ -11,10 +11,11 @@ namespace ampersand::meta {
     protected:
         meta_object_base() {};
     protected:
-        template <typename AttrT>
+        template <typename AttrT> 
         auto& _M_Get(AttrT) { 
             return body_type::get(_M_Base, AttrT{}, MetaType{}); 
         }
+        
     protected:
         attribute_field_type _M_Base;
     };

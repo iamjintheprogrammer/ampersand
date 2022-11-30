@@ -17,4 +17,7 @@ namespace ampersand::proto {
 
     struct receive_size : meta::annotation {};
     struct    send_size : meta::annotation {};
+
+    struct receive_address : meta::annotation {};
+    struct    send_address : meta::annotation {};
 }

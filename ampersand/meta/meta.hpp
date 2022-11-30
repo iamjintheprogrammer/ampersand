@@ -1,20 +1,14 @@
 #pragma once
-#include <ampersand/meta/utility/trait.hpp>
-#include <ampersand/meta/utility/trait_concept.hpp>
+#include <boost/mp11.hpp>
 
 namespace ampersand::meta {
-    template <concepts::attribute... Attributes>
+    template <typename... Attributes>
     struct meta_type {
         using type = boost::mp11::mp_list<Attributes...>;
         constexpr meta_type(Attributes...) {}
         constexpr meta_type()              {}
     };
 
-    template <concepts::attribute... Attributes>
-    meta_type(Attributes...)->meta_type<Attributes...>;
-
-    template <typename... Attributes>
-    constexpr auto make_meta_type(const Attributes&...) {
-        return meta_type<Attributes...>{};
-    }
+    template <typename... AttributeT>
+    meta_type(AttributeT...)->meta_type<AttributeT...>;
 }

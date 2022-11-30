@@ -26,10 +26,14 @@ namespace ampersand::meta::utility {
 
     template <typename AnyType>       struct is_meta_type                           : std::false_type {};
     template <typename... Attributes> struct is_meta_type<meta_type<Attributes...>> : std::true_type  {};
-    template <typename T>             using  is_meta_type_v = is_meta_type<T>::value;
+    template <typename T>             
+    inline constexpr bool  is_meta_type_v = is_meta_type<T>::value;
 
     template <typename AnyType>                  
-    struct is_meta_object                                          : std::false_type {};
+    struct is_meta_object                               : std::false_type {};
     template <typename BodyT, typename... AttrT> 
-    struct is_meta_object<meta_object<BodyT, meta_type<AttrT...>>> : std::true_type  {};
+    struct is_meta_object<meta_object<BodyT, AttrT...>> : std::true_type  {};
+
+    template <typename AnyType>
+    inline constexpr bool is_meta_object_v = is_meta_object<AnyType>::value;
 }
