@@ -2,6 +2,7 @@
 #include <type_traits>
 
 #include <ampersand/meta/meta.hpp>
+#include <ampersand/meta/meta_object.hpp>
 #include <ampersand/proto/annotation.hpp>
 
 namespace ampersand::proto {
@@ -31,6 +32,33 @@ namespace ampersand::proto {
     struct is_resizable                               : std::false_type {};
     template <typename T, std::size_t Min, std::size_t Max>
     struct is_resizable<resizable_field<T, Min, Max>> : std::true_type  {};
+
+
+    template <concep, template <typename...> typename Predicate>
+    struct has_annotation<meta::attribute<AttrT, Annotations...>, Predicate> {
+        static constexpr bool value
+            = (boost::mp11::mp_find_if
+                    <boost::mp11::mp_list<Annotations...>, Predicate>::value
+                        != sizeof...(Annotations));
+    };
+
+    template <typename... AnyType>
+    struct has_attribute : std::false_type {};
+
+    template <typename BodyT, typename AttrT, typename... Remaining, template <typename...> typename Predicate>
+    struct has_attribute<meta::meta_object<BodyT, AttrT, Remaining...>, Predicate> {
+        static constexpr bool value
+            = (has_annotation<AttrT, Predicate>::value) ? true
+                : has_attribute<meta::meta_object<BodyT, Remaining...>,
+                    has_annotation<AttrT, Predicate>>::value;
+    };
+
+    template <typename BodyT, typename AttrT, template <typename...> typename Predicate>
+    struct has_attribute<meta::meta_object<BodyT, AttrT>, Predicate> {
+        static constexpr bool value
+            = has_annotation<AttrT, Predicate>::value;
+    };
+    
 
     template <typename T>
     struct has_field_annotation : std::false_type {};
