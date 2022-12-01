@@ -12,6 +12,7 @@ option(BUILD_EXAMPLES ON)
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/submodule/mp11/include)
 include_directories(${CMAKE_SOURCE_DIR}/submodule/jsoncpp/include)
+include_directories(${CMAKE_SOURCE_DIR}/external/mysql/include)
 
 add_subdirectory(ampersand/proto)
 add_subdirectory(ampersand/meta)

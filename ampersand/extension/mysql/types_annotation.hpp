@@ -2,6 +2,8 @@
 #include <ampersand/meta/annotation.hpp>
 
 namespace ampersand::extension::mysql::annotation {
+	struct mysql_type	  : meta::annotation {};
+
 	struct auto_increment : meta::annotation {};
 	struct not_null		  : meta::annotation {};
 
