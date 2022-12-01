@@ -5,9 +5,9 @@ namespace ampersand::meta {
     template <typename... AnyT>
     class meta_object;
 
-    template <typename BodyT, typename... AttributeT, typename... ActionT>
-    class meta_object     <BodyT, meta_type<AttributeT...>, ActionT...>
-        : meta_object_base<BodyT, meta_type<AttributeT...>, ActionT...> {
+    template <typename BodyT, typename... AttributeT>
+    class meta_object     <BodyT, meta_type<AttributeT...>>
+        : meta_object_base<BodyT, meta_type<AttributeT...>> {
         using base_type = meta_object_base<BodyT, meta_type<AttributeT...>>;
     public:
         using meta_type            =          meta_type<AttributeT...>       ;

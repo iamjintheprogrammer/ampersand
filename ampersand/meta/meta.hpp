@@ -11,4 +11,10 @@ namespace ampersand::meta {
 
     template <typename... AttributeT>
     meta_type(AttributeT...)->meta_type<AttributeT...>;
+
+    template <typename... AnyType>
+    struct meta_type_size                           : std::integral_constant<std::size_t, 0> {};
+
+    template <typename... AttributeT>
+    struct meta_type_size<meta_type<AttributeT...>> : std::integral_constant<std::size_t, sizeof...(AttributeT)> {};
 }

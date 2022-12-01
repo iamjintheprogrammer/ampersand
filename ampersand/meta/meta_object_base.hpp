@@ -2,7 +2,7 @@
 #include <ampersand/meta/meta.hpp>
 
 namespace ampersand::meta {
-    template <typename BodyT, typename MetaType, typename... ActionT>
+    template <typename BodyT, typename MetaType>
     class meta_object_base {
     protected:
         using body_type            = BodyT;

@@ -1,4 +1,6 @@
 #include <ampersand/meta/body/raw.hpp>
+#include <ampersand/meta/body/tuple.hpp>
+
 #include <ampersand/meta/meta_object.hpp>
 
 #include <iostream>
@@ -17,6 +19,10 @@ void test() {
 int main() {
 	using namespace ampersand::meta;
 
-	meta_type   Meta	   { test1_var{}, test2_var{} };
-	meta_object MetaObject ( body::raw{}, Meta );
-}
+	meta_type   Meta	   {test1_var  {}, test2_var{}};
+	meta_object MetaObject (body::raw  {}, Meta);
+	meta_object MetaTuple  (body::tuple{}, Meta);
+
+	MetaTuple[test1_var{}] = 5;
+	std::cout << MetaTuple[test1_var{}] << std::endl;
+}\
