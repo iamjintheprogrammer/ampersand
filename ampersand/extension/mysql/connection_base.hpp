@@ -3,6 +3,8 @@
 
 namespace ampersand::extension::mysql {
 	class connection_base {
+		template <typename... AnyType> friend class reader;
+		template <typename... AnyType> friend class writer;
 	protected:
 		class endpoint {
 			friend class connection_base;

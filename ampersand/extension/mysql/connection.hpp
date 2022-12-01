@@ -3,9 +3,10 @@
 #include <ampersand/extension/mysql/connection_base.hpp>
 
 namespace ampersand::extension::mysql {
-	class connection : connection_base {
-		template <typename... AnyType>
-		friend class table;
+	class connection : public connection_base {
+		template <typename... AnyType> friend class table;
+		template <typename... AnyType> friend class reader;
+		template <typename... AnyType> friend class writer;
 	public:
 		using string_type = std::string;
 		using endpoint	  = connection_base::endpoint;

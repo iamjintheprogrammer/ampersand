@@ -24,3 +24,7 @@ connection_base::connection_base
 	
 	_M_Base->setSchema(pSchema.c_str());
 }
+
+connection_base::~connection_base() {
+	_M_Base->close();
+}

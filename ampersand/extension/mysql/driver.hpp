@@ -6,6 +6,8 @@
 #include <jdbc/cppconn/connection.h>
 #include <jdbc/cppconn/datatype.h>
 #include <jdbc/cppconn/driver.h>
+#include <jdbc/cppconn/resultset.h>
+#include <jdbc/cppconn/statement.h>
 
 namespace ampersand::extension::mysql {
 	class driver {

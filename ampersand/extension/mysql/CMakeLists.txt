@@ -11,6 +11,10 @@ add_library(ampersand.extension.mysql STATIC
             connection.hpp
             connection.cpp
             connection_base.hpp
-            connection_base.cpp)
+            connection_base.cpp
+            reader.hpp
+            reader_impl.hpp
+            writer.hpp
+            writer_impl.hpp)
 
 set_target_properties(ampersand.extension.mysql PROPERTIES LINKER_LANGUAGE CXX)
