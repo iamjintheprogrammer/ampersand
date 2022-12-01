@@ -27,6 +27,10 @@ namespace ampersand::meta {
 		__adapt_object
 			(meta_object_base<LBodyT, meta_type<LAttributeT...>>& pLhs,
 			 meta_object_base<RBodyT, meta_type<RAttributeT...>>& pRhs) {
+		static_assert
+			(sizeof...(LAttributeT) == sizeof...(RAttributeT),
+				"[AMPERSAND][META] LHS and RHS Attribute Count Mismatch");
+		
 		[&pLhs, &pRhs] <std::size_t... Idx>
 			(std::index_sequence<Idx...>) {
 			(__adapt_object_impl<Idx>(pLhs, pRhs), ...);

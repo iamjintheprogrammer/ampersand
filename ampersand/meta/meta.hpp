@@ -9,6 +9,12 @@ namespace ampersand::meta {
         constexpr meta_type()              {}
     };
 
+    template <>
+    struct meta_type<> {
+        using type = boost::mp11::mp_list<>;
+        constexpr meta_type() {}
+    };
+
     template <typename... AttributeT>
     meta_type(AttributeT...)->meta_type<AttributeT...>;
 

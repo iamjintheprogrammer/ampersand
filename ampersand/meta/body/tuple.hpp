@@ -12,7 +12,6 @@
 
 namespace ampersand::meta::body {
 	struct tuple {
-	public:
 		template <typename MetaType>
 		struct attribute_field;
 
@@ -26,12 +25,27 @@ namespace ampersand::meta::body {
 
 	public:
 		template <typename FieldT, typename AttrT, typename MetaT>
-		static auto& get(FieldT&& pField, AttrT, MetaT) {
-			return
-				std::get
-					<boost::mp11::mp_find
-						<typename MetaT::type, AttrT>::value>
-							(pField);
-		}
+		static auto&		  get	   (FieldT&&, AttrT, MetaT);
+		template <typename FieldT, typename AttrT, typename MetaT>
+		static std::ptrdiff_t get_index(FieldT&&, AttrT, MetaT);
 	};
+
+	template <typename FieldT, typename AttrT, typename MetaT>
+	auto&
+		tuple::get
+			(FieldT&& pField, AttrT, MetaT) {
+		return
+			std::get
+				<boost::mp11::mp_find
+					<typename MetaT::type, AttrT>::value>
+						(pField);
+	}
+
+	template <typename FieldT, typename AttrT, typename MetaT>
+	std::ptrdiff_t
+		tuple::get_index(FieldT&& pField, AttrT, MetaT) {
+		return
+			boost::mp11::mp_find
+				<typename MetaT::type, AttrT>::value;
+	}
 }

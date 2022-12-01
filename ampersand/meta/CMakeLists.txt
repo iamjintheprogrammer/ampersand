@@ -15,6 +15,8 @@ add_library(ampersand.meta STATIC
             body/raw.hpp
             body/raw_impl.hpp
             body/tuple.hpp
-            body/tuple_impl.hpp)
+            body/tuple_impl.hpp
+            body/tag.hpp
+            body/tag_impl.hpp)
 
 set_target_properties(ampersand.meta PROPERTIES LINKER_LANGUAGE CXX)
