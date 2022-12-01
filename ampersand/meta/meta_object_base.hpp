@@ -10,7 +10,7 @@ namespace ampersand::meta {
 
     protected:
         meta_object_base() {};
-    protected:
+    public:
         template <typename AttrT> 
         auto& _M_Get(AttrT) { 
             return body_type::get(_M_Base, AttrT{}, MetaType{}); 

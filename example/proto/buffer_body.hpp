@@ -1,4 +1,7 @@
+#pragma once
+
 #include <iostream>
+#include <ampersand/meta/body/raw.hpp>
 
 #include <ampersand/proto/field.hpp>
 #include <ampersand/proto/annotation.hpp>
@@ -7,8 +10,17 @@
 #include <ampersand/proto/buffer.hpp>
 #include <ampersand/proto/body.hpp>
 
+template <typename BufferT, typename ObjectT>
+void
+	example_import_packet
+		(BufferT&& pBuffer, ObjectT&& pObject) {
+	pBuffer = pObject;
+}
+
 template <typename BufferT>
-void pseudo_receive(BufferT&& pBuffer) {
+void
+	example_pseudo_receive
+		(BufferT&& pBuffer) {
 	using buffer_t = std::remove_const_t<std::remove_reference_t<BufferT>>;
 	using namespace ampersand::proto;
 	using namespace ampersand::meta::utility;
@@ -17,17 +29,4 @@ void pseudo_receive(BufferT&& pBuffer) {
 		std::cout << "Have Field\n";
 
 	std::cout << pBuffer[ampersand::proto::fields::field<int>] << std::endl;
-}
-
-int main() {
-	auto Buffer = ampersand::proto::make_buffer
-		( ampersand::proto::fields::remapped_field    <std::uint32_t, std::uint64_t>,
-		  ampersand::proto::fields::field		      <int>,
-		  ampersand::proto::fields::send_size_field   <int>,
-		  ampersand::proto::fields::receive_size_field<std::uint64_t>);
-
-	Buffer[ampersand::proto::fields::field<int>] = 5;
-
-	pseudo_receive(Buffer);
-	std::cout << sizeof(Buffer) << std::endl;
 }

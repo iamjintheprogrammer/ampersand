@@ -18,7 +18,7 @@ int main() {
 			{big_int<extension::mysql::annotation::not_null>,
 			 varchar<20, extension::mysql::annotation::not_null>};
 
-	auto Table = ampersand::extension::mysql::make_table(MetaType, "Hello"s, "Hello2"s);
+	auto Table = ampersand::extension::mysql::make_table(MetaType, "Hello"s);
 	Table[big_int<extension::mysql::annotation::not_null>] = 5;
 	std::cout << Table[big_int<extension::mysql::annotation::not_null>] << std::endl;
 }

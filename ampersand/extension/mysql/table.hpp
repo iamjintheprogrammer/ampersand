@@ -17,6 +17,10 @@ namespace ampersand::extension::mysql {
 	public:
 		template <typename... StringType>
 		table(StringType&&... pName) {
+			static_assert
+				(sizeof...(StringType) 
+					== meta::meta_type_size<typename MetaType::type>::value,
+						"[AMPERSAND][MYSQL] Name Tag Count Mismatch !!\n");
 			mysql::body::init_name_table
 				(this->attribute_field(), std::make_tuple(pName...));
 		}

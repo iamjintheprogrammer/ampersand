@@ -3,4 +3,6 @@ project(ampersand.example.proto
         VERSION 0.1.0
         LANGUAGES CXX)
 
-add_executable(example.proto proto.cpp)
+add_executable(example.proto
+               buffer_body.hpp
+               main.cpp)

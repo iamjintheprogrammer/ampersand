@@ -33,15 +33,16 @@ namespace ampersand::meta::body {
     template <typename T, typename AttrT, typename... AttrRemaining>
     struct __raw_offset<T, meta_type<AttrT, AttrRemaining...>> {
         static constexpr std::size_t value
-            = (std::is_same_v<T, typename AttrT::attribute_type>)
+            = (std::is_same_v<T, AttrT>)
                     ? 0
-                    : __raw_offset<T, meta_type<AttrRemaining...>>::value;
+                    : sizeof(typename AttrT::attribute_type)
+                        + __raw_offset<T, meta_type<AttrRemaining...>>::value;
     };
 
     template <typename T, typename AttrT>
     struct __raw_offset<T, meta_type<AttrT>> {
         static constexpr std::size_t value
-            = (std::is_same_v<T, typename AttrT::attribute_type>)
+            = (std::is_same_v<T, AttrT>)
                     ? 0
                     : sizeof(typename AttrT::attribute_type);
     };
