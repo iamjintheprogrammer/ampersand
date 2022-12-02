@@ -1,4 +1,5 @@
 #include "connection_base.hpp"
+#include <iostream>
 
 using namespace ampersand::extension::mysql;
 
@@ -16,12 +17,17 @@ connection_base::endpoint::endpoint
 connection_base::connection_base
 	(driver& pDriver, endpoint& pEndpoint, std::string& pSchema)
 		: _M_Base_Driver((__driver_type)pDriver._M_Base) {
-	_M_Base 
-		= _M_Base_Driver->connect
-				(pEndpoint._M_Ep_Address.c_str(),
-				 pEndpoint._M_Ep_Account_Name   ,
-				 pEndpoint._M_Ep_Account_PassCode);
-	
+	try {
+		_M_Base
+			= _M_Base_Driver->connect
+					(pEndpoint._M_Ep_Address.c_str(),
+					 pEndpoint._M_Ep_Account_Name   ,
+					 pEndpoint._M_Ep_Account_PassCode);
+	}
+	catch (sql::SQLException& pException) {
+		std::cout << pException.what() << std::endl;
+		return;
+	}
 	_M_Base->setSchema(pSchema.c_str());
 }
 

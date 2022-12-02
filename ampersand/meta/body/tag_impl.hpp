@@ -25,7 +25,7 @@ namespace ampersand::meta::body {
 	};
 
 	template <typename... AnyType>
-	using __tag_name_table = __tag_name_table_impl<std::tuple<>, AnyType...>;
+	using __tag_name_table = __tag_name_table_impl<std::tuple<>, AnyType...>::type;
 
 	template <typename... AnyType>
 	struct __tag_attribute_table_impl;
