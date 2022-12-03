@@ -29,17 +29,27 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+	ampersand::schema::field Field1{ test {} };
+	ampersand::schema::field Field2{ test2{} };
+
 	ampersand::schema::table<test_meta> Table ("testtable");
-	ampersand::schema::syntax::select   Syntax( Table );
+	ampersand::schema::row				Row   { Field1, Field2 };
+
+	ampersand::schema::syntax::select   Select( Table, Row, (Field1 < Field2) || (Field1 == Field2));
+	ampersand::schema::syntax::insert   Insert(Table);
+
+	Table[test{}] = "test";
+	Table[test2{}] = "test2";
+
+	Insert[test{}]  = 3;
+	Insert[test2{}] = 4;
 
 	ampersand::extension::mysql::driver				  Driver;
 	ampersand::extension::mysql::connection::endpoint Endpoint  ("127.0.0.1", 6500, argv[1], argv[2]);
 	ampersand::extension::mysql::connection			  Connection(Driver, Endpoint, "test");
 
-	ampersand::extension::mysql::parser			 Parser(Syntax);
-	ampersand::extension::mysql::reader			 Reader(ampersand::meta::body::raw{}, Connection, Parser);
-	ampersand::extension::mysql::reader_iterator ReaderIterator(Reader);
-
-	std::cout << (*ReaderIterator)[test {}] << std::endl;
-	std::cout << (*ReaderIterator)[test2{}] << std::endl;
+	ampersand::extension::mysql::parser ParserInsert (Insert);
+	ampersand::extension::mysql::parser ParserSselect(Select);
+	std::cout << ParserInsert () << std::endl;
+	std::cout << ParserSselect() << std::endl;
 }

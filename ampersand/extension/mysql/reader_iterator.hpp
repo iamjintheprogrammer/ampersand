@@ -10,7 +10,7 @@ namespace ampersand::extension::mysql {
 		: public 
 			std::iterator
 				<std::output_iterator_tag,
-				 typename reader<BodyT, ParserType>::value_type> {
+					typename reader<BodyT, ParserType>::value_type> {
 		typename
 			reader<BodyT, ParserType>::__result 
 				_M_Iterator_Base;
@@ -18,7 +18,7 @@ namespace ampersand::extension::mysql {
 		using value_type = typename reader<BodyT, ParserType>::value_type;
 
 		reader_iterator(reader<BodyT, ParserType>& pResult) : _M_Iterator_Base(pResult._M_RdBase) {}
-		reader_iterator()									: _M_Iterator_Base(nullptr)		   {}
+		reader_iterator()									: _M_Iterator_Base(nullptr)		      {}
 
 	public:
 		reader_iterator& operator++()   ;

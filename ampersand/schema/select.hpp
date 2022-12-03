@@ -13,16 +13,15 @@ namespace ampersand::schema::syntax {
 
 	template 
 		<typename CondVerb, typename LCond, typename RCond, 
-			typename... TableAttr, 
-				typename RowBodyT, typename... RowFieldT> // For SELECT (Field1), (Field2), ... FROM ...
+			typename... TableAttr,  typename... RowFieldT> // For SELECT (Field1), (Field2), ... FROM ...
 	class
 		select <table<meta::meta_type<TableAttr...>>			,
-				row  <RowBodyT, RowFieldT...>					,
+				row  <RowFieldT...>					,
 				syntax::binary_condition<CondVerb, LCond, RCond>> {
 	public:
 		using condition  = syntax::binary_condition<CondVerb, LCond, RCond>;
 		using table_type = table<meta::meta_type<TableAttr...>>;
-		using row_type   = row<RowBodyT, RowFieldT...>;
+		using row_type   = row  <RowFieldT...>;
 
 		select() = delete;
 		select(table_type& pTable, row_type, condition)
@@ -45,7 +44,7 @@ namespace ampersand::schema::syntax {
 	public:
 		using condition  = syntax::binary_condition<CondVerb, LCond, RCond>;
 		using table_type = table<meta::meta_type<TableAttr...>>;
-		using row_type	 = row  <meta::body::tuple, field<TableAttr>...>;
+		using row_type	 = row  <field<TableAttr>...>;
 
 		select() = delete;
 		select(table_type& pRow, condition)
@@ -63,7 +62,7 @@ namespace ampersand::schema::syntax {
 			<table<meta::meta_type<TableAttr...>>> {
 	public:
 		using table_type = table<meta::meta_type<TableAttr...>>;
-		using row_type	 = row  <meta::body::tuple, field<TableAttr>...>;
+		using row_type	 = row  <field<TableAttr>...>;
 
 		select() = delete;
 		select(table_type& pRow) : _M_Table(pRow) {}
@@ -75,15 +74,13 @@ namespace ampersand::schema::syntax {
 	};
 
 	template 
-		<typename... TableAttr, 
-			typename RowBodyT, typename... RowFieldT> // For SELECT (Field1), (Field2), ... FROM ...
+		<typename... TableAttr, typename... RowFieldT> // For SELECT (Field1), (Field2), ... FROM ...
 	class
 		select 
-			<table<meta::meta_type<TableAttr...>>,
-				row<RowBodyT, RowFieldT...>>	 {
+			<table<meta::meta_type<TableAttr...>>, row<RowFieldT...>> {
 	public:
 		using table_type = table<meta::meta_type<TableAttr...>>;
-		using row_type   = row<RowBodyT, RowFieldT...>;
+		using row_type   = row<RowFieldT...>;
 
 		select() = delete;
 		select(table_type& pTable, row_type)
@@ -105,23 +102,22 @@ namespace ampersand::schema::syntax {
 			<table<meta::meta_type<TableAttr...>>, 
 				syntax::binary_condition<CondVerb, LCond, RCond>>;
 	template 
-		<typename... TableAttr, typename RowBodyT, typename... RowFieldT,
+		<typename... TableAttr, typename... RowFieldT,
 			typename CondVerb, typename LCond, typename RCond>
 	select
-		(table<meta::meta_type<TableAttr...>>&, 
-			row<RowBodyT, RowFieldT...>&,
+		(table<meta::meta_type<TableAttr...>>&, row<RowFieldT...>&,
 				syntax::binary_condition<CondVerb, LCond, RCond>)
 		-> select
 			<table<meta::meta_type<TableAttr...>>, 
-				row<RowBodyT, RowFieldT...>, 
+				row<RowFieldT...>, 
 					syntax::binary_condition<CondVerb, LCond, RCond>>;
 
 	template 
-		<typename... TableAttr, typename RowBodyT, typename... RowFieldT>
+		<typename... TableAttr, typename... RowFieldT>
 	select
-		(table<meta::meta_type<TableAttr...>>&, row<RowBodyT, RowFieldT...>&)
+		(table<meta::meta_type<TableAttr...>>&, row<RowFieldT...>&)
 		-> select
-			<table<meta::meta_type<TableAttr...>>, row<RowBodyT, RowFieldT...>>;
+			<table<meta::meta_type<TableAttr...>>, row<RowFieldT...>>;
 
 	template 
 		<typename... TableAttr>

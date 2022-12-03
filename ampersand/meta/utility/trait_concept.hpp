@@ -45,5 +45,5 @@ namespace ampersand::meta::utility {
             = (boost::mp11::mp_find_if
                     <typename ObjectT::meta_type::type, has_annotated_attribute_impl>::value
                         != boost::mp11::mp_size<typename ObjectT::meta_type::type>::value);
-    };    
+    };
 }

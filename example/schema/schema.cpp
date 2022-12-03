@@ -23,7 +23,7 @@ int main() {
 			Field,
 			Field2
 		);
-	ampersand::schema::syntax::select Syntax ( Table, Row );
+	ampersand::schema::syntax::select Syntax ( Table, Row, (Field1 <= Field2) );
 
 	std::cout 
 		<< ampersand::extension::mysql::parser(Syntax)() 

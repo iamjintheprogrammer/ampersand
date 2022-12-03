@@ -14,6 +14,11 @@ add_library(ampersand.extension.mysql STATIC
             writer.hpp
             writer_impl.hpp
             parser.hpp
-            parser_impl.hpp)
+            parser_impl.hpp
+            parser_binary_impl.hpp
+            parser_select_impl.hpp
+            parser_select.hpp
+            parser_insert_impl.hpp
+            parser_insert.hpp)
 
 set_target_properties(ampersand.extension.mysql PROPERTIES LINKER_LANGUAGE CXX)
