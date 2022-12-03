@@ -9,6 +9,7 @@ add_library(ampersand.extension.mysql STATIC
             connection_base.hpp
             connection_base.cpp
             reader.hpp
+            reader_iterator.hpp
             reader_impl.hpp
             writer.hpp
             writer_impl.hpp
