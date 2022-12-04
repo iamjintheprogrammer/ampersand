@@ -20,27 +20,29 @@ namespace ampersand::meta::body {
         using attribute_field_type = typename attribute_field<MetaType>::type;
 
     public:
-        template <typename FieldT, typename AttrT, typename MetaT>
-        static auto&          get      (FieldT&&, AttrT, MetaT);
-        template <typename FieldT, typename AttrT, typename MetaT>
-        static std::ptrdiff_t get_index(FieldT&&, AttrT, MetaT);
+        template <typename MetaT, typename FieldT, typename AttrT>
+        static constexpr typename AttrT::value_type& get      (FieldT&&, AttrT);
+        template <typename MetaT, typename FieldT, typename AttrT>
+        static constexpr std::ptrdiff_t              get_index(FieldT&&, AttrT);
     };
 
-    template <typename FieldT, typename AttrT, typename MetaT>
-    auto& 
-        raw::get (FieldT&& pField, AttrT, MetaT) {
-            return
-                *reinterpret_cast<typename AttrT::attribute_type*>
-                    (reinterpret_cast<std::uint8_t*>(pField)
-                        + __raw_offset_v<AttrT, MetaT>);
+    template <typename MetaT, typename FieldT, typename AttrT>
+    constexpr typename AttrT::value_type&
+        raw::get 
+            (FieldT&& pField, AttrT) {
+        return
+            *reinterpret_cast<typename AttrT::value_type*>
+                (reinterpret_cast<std::uint8_t*>(pField) + __raw_offset_v<AttrT, MetaT>);
     }
 
-    template <typename FieldT, typename AttrT, typename MetaT>
-    std::ptrdiff_t
-        raw::get_index(FieldT&& pField, AttrT, MetaT) {
+    template <typename MetaT, typename FieldT, typename AttrT>
+    constexpr std::ptrdiff_t
+        raw::get_index
+            (FieldT&& pField, AttrT) {
         return
             boost::mp11::mp_find
-                <boost::mp11::mp_list
-                    <typename MetaT::type>, AttrT>::value;
+                <typename __raw_meta_to_mp11<MetaT>::type, AttrT>::value;
     }
 }
+
+namespace ampersand::meta { inline constexpr body::raw raw_body = body::raw{}; }

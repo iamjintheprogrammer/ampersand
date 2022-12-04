@@ -7,6 +7,8 @@
 #include <ampersand/meta/meta.hpp>
 #include <ampersand/meta/meta_object.hpp>
 
+#include <ampersand/meta/condition.hpp>
+
 namespace ampersand::meta::utility {
     template <typename... T>
     struct is_attribute                                        : std::false_type {};
@@ -36,4 +38,11 @@ namespace ampersand::meta::utility {
 
     template <typename AnyType>
     inline constexpr bool is_meta_object_v = is_meta_object<AnyType>::value;
+
+    template <typename...AnyType>
+	struct is_binary_condition                                         : std::false_type {};
+	template <typename Verb, typename LField, typename RField>
+	struct is_binary_condition<binary_condition<Verb, LField, RField>> : std::true_type  {};
+	template <typename... AnyType>
+	inline constexpr bool is_binary_condition_v = is_binary_condition<AnyType...>::value;
 }

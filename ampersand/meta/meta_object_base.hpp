@@ -13,39 +13,39 @@ namespace ampersand::meta {
     protected:
         meta_object_base() {};
     public:
-        template <typename AttrT> auto&      _M_Get      (AttrT);
-        template <typename AttrT> index_type _M_Get_Index(AttrT);
-        
+        template <typename AttrT> typename AttrT::value_type& _M_Get      (AttrT);
+        template <typename AttrT> index_type                  _M_Get_Index(AttrT);
+      
     protected:
         attribute_field_type _M_Base;
     };
 
-    template <typename MetaType>
-    class meta_object_base<body::tag, MetaType> {
+    template <typename KeyType, typename MetaType>
+    class meta_object_base<body::tag<KeyType>, MetaType> {
     protected:
-        using body_type            = body::tag;
+        using body_type            = body::tag<KeyType>;
         using attribute_field_type = typename body_type::template attribute_field_type<MetaType>;
         
         using index_type           = std::ptrdiff_t;
-        using name_type            = std::string;
+        using key_type             = KeyType;
 
     protected:
         meta_object_base() {};
     public:
-        template <typename AttrT> auto&      _M_Get      (AttrT);
-        template <typename AttrT> index_type _M_Get_Index(AttrT);
-        template <typename AttrT> name_type& _M_Get_Name (AttrT);
-        
+        template <typename AttrT> typename AttrT::value_type& _M_Get       (AttrT);
+        template <typename AttrT> index_type                  _M_Get_Index (AttrT);
+        template <typename AttrT> key_type&                   _M_Get_Key   (AttrT);
+
     protected:
         attribute_field_type _M_Base;
     };
 
     template <typename BodyT, typename MetaType>
     template <typename AttrT>
-    auto&
+    typename AttrT::value_type&
         meta_object_base<BodyT, MetaType>::_M_Get
             (AttrT pAttribute) {
-        return body_type::get(_M_Base, AttrT{}, MetaType{});
+        return body_type::get<MetaType>(_M_Base, pAttribute);
     }
 
     template <typename BodyT, typename MetaType>
@@ -54,32 +54,32 @@ namespace ampersand::meta {
         meta_object_base<BodyT, MetaType>::index_type
             meta_object_base<BodyT, MetaType>::_M_Get_Index
                 (AttrT pAttribute) {
-        return body_type::get_index(_M_Base, AttrT{}, MetaType{});
+        return body_type::get_index<MetaType>(_M_Base, pAttribute);
     }
 
-    template <typename MetaType>
+    template <typename KeyType, typename MetaType>
     template <typename AttrT>
-    auto&
-        meta_object_base<body::tag, MetaType>::_M_Get
+    typename AttrT::value_type&
+        meta_object_base<body::tag<KeyType>, MetaType>::_M_Get
             (AttrT pAttribute) {
-        return body_type::get(_M_Base, AttrT{}, MetaType{});
+        return body_type::get<MetaType>(_M_Base, AttrT{});
     }
 
-    template <typename MetaType>
+    template <typename KeyType, typename MetaType>
     template <typename AttrT>
     typename
-        meta_object_base<body::tag, MetaType>::index_type
-            meta_object_base<body::tag, MetaType>::_M_Get_Index
+        meta_object_base<body::tag<KeyType>, MetaType>::index_type
+            meta_object_base<body::tag<KeyType>, MetaType>::_M_Get_Index
                 (AttrT pAttribute) {
-        return body_type::get_index(_M_Base, AttrT{}, MetaType{});
+        return body_type::get_index<MetaType>(_M_Base, pAttribute);
     }
 
-    template <typename MetaType>
+    template <typename KeyType, typename MetaType>
     template <typename AttrT>
     typename
-        meta_object_base<body::tag, MetaType>::name_type&
-            meta_object_base<body::tag, MetaType>::_M_Get_Name
+        meta_object_base<body::tag<KeyType>, MetaType>::key_type&
+            meta_object_base<body::tag<KeyType>, MetaType>::_M_Get_Key
                 (AttrT pAttribute) {
-        return body_type::get_name(_M_Base, AttrT{}, MetaType{});
+        return body_type::get_key<MetaType>(_M_Base, pAttribute);
     }
 }

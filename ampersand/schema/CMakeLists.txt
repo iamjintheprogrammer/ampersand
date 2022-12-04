@@ -7,10 +7,7 @@ add_library(ampersand.schema STATIC
             type_traits.hpp
             table.hpp
             table_impl.hpp
-            condition.hpp
-            field.hpp
-            select.hpp
-            insert.hpp
-            row.hpp)
+            syntax/select.hpp
+            syntax/insert.hpp)
 
 set_target_properties(ampersand.schema PROPERTIES LINKER_LANGUAGE CXX)

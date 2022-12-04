@@ -1,33 +1,32 @@
 #pragma once
 #include <ampersand/meta/attribute.hpp>
-#include <ampersand/schema/field.hpp>
 
 namespace ampersand::schema {
 namespace types				{
 	template <std::size_t VarcharSize, typename... Annotation>
-	struct variable_string : field<meta::attribute<char[VarcharSize]>> {};
+	struct variable_string : meta::attribute<char[VarcharSize]> {};
 	template <std::size_t VarcharSize, typename... Annotation>
-	struct		    string : field<meta::attribute<char[VarcharSize]>> {};
+	struct		    string : meta::attribute<char[VarcharSize]> {};
 
 	template <typename... Annotation>
-	using tiny_int_t		  = field<meta::attribute<std::int8_t , Annotation...>>;
+	using tiny_int_t		  = meta::attribute<std::int8_t , Annotation...>;
 	template <typename... Annotation>
-	using unsigned_tiny_int_t = field<meta::attribute<std::uint8_t, Annotation...>>;
+	using unsigned_tiny_int_t = meta::attribute<std::uint8_t, Annotation...>;
 
 	template <typename... Annotation>
-	using small_int_t		   = field<meta::attribute<std::int16_t , Annotation...>>;
+	using small_int_t		   = meta::attribute<std::int16_t , Annotation...>;
 	template <typename... Annotation>
-	using unsigned_small_int_t = field<meta::attribute<std::uint16_t, Annotation...>>;
+	using unsigned_small_int_t = meta::attribute<std::uint16_t, Annotation...>;
 
 	template <typename... Annotation>
-	using normal_int_t			= field<meta::attribute<std::int32_t, Annotation...>>;
+	using normal_int_t			= meta::attribute<std::int32_t, Annotation...>;
 	template <typename... Annotation>
-	using unsigned_normal_int_t = field<meta::attribute<std::uint32_t, Annotation...>>;
+	using unsigned_normal_int_t = meta::attribute<std::uint32_t, Annotation...>;
 
 	template <typename... Annotation>
-	using		   big_int_t = field<meta::attribute<std::int64_t , Annotation...>>;
+	using		   big_int_t = meta::attribute<std::int64_t , Annotation...>;
 	template <typename... Annotation>
-	using unsigned_big_int_t = field<meta::attribute<std::uint64_t, Annotation...>>;
+	using unsigned_big_int_t = meta::attribute<std::uint64_t, Annotation...>;
 
 	template <typename T, T Value>
 	struct constant : std::integral_constant<T, Value> { };

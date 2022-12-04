@@ -7,8 +7,8 @@ add_library(ampersand.meta STATIC
             meta_object_base.hpp
             meta_object_impl.hpp
             attribute.hpp
-            action.hpp
             annotation.hpp
+            condition.hpp
             utility/contains.hpp
             utility/trait_concept.hpp
             utility/trait.hpp

@@ -9,20 +9,19 @@ namespace ampersand::schema {
 	template <typename... AnyType>
 	class table;
 
-	template <typename... Attributes>
-	class table<meta::meta_type<Attributes...>> {
+	template <typename StringType, typename... Attributes>
+	class table<StringType, meta::meta_type<Attributes...>> {
 		using __name_tuple = __table_name_tuple<Attributes...>::type;
 		using __string	   = std::string;
 
-			  __name_tuple _M_Name;
+			  __name_tuple _M_Name		;
 			  __string	   _M_Table_Name;
 	public:
-		using string_type = std::string;
+		using string_type = StringType;
 
 	public:
-		template <typename... StringType>
-		table(string_type, StringType&&...); // Create Table
-		table(string_type);
+		template <typename... ArgString>
+		table(meta::meta_type<Attributes...>, string_type, ArgString&&...); // Create Table
 
 	public:
 		template <typename AttrT>
@@ -30,31 +29,31 @@ namespace ampersand::schema {
 		string_type& name	   ();
 	};
 
-	template <typename... Attributes>
-	template <typename... StringType>
-	table<meta::meta_type<Attributes...>>::table
-		(string_type pName, StringType&&... pString) // Create Table
+	template <typename StringType, typename... Attributes>
+	template <typename... ArgString>
+	table<StringType, meta::meta_type<Attributes...>>::table
+		(meta::meta_type<Attributes...>,
+			string_type pName, ArgString&&... pString) // Create Table
 			: _M_Table_Name(pName) {
-		if constexpr (sizeof...(StringType) == sizeof...(Attributes))
-			_M_Name = std::make_tuple(pString...);
+		if constexpr (sizeof...(ArgString) == sizeof...(Attributes))
+			_M_Name = std::make_tuple(string_type(pString)...);
 	}
 
-	template <typename... Attributes>
-	table<meta::meta_type<Attributes...>>::table(string_type pName)
-		: _M_Table_Name(pName) {}
-
-	template <typename... Attribute>
+	template <typename StringType, typename... Attributes>
 	template <typename AttrT>
-	typename table<meta::meta_type<Attribute...>>::string_type&
-		table<meta::meta_type<Attribute...>>::operator[](AttrT pAttribute) {
+	typename table<StringType, meta::meta_type<Attributes...>>::string_type&
+		table<StringType, meta::meta_type<Attributes...>>::operator[](AttrT pAttribute) {
 			return
 				__name_from_tuple
-					(pAttribute, meta::meta_type<Attribute...>{}, _M_Name);
+					(pAttribute, meta::meta_type<Attributes...>{}, _M_Name);
 	}
 
-	template <typename... Attribute>
-	typename table<meta::meta_type<Attribute...>>::string_type&
-		table<meta::meta_type<Attribute...>>::name() {
+	template <typename StringType, typename... Attributes>
+	typename table<StringType, meta::meta_type<Attributes...>>::string_type&
+		table<StringType, meta::meta_type<Attributes...>>::name() {
 			return _M_Table_Name;
 	}
+
+	template <typename MetaType, typename StringType, typename... ArgString>
+	table(MetaType, StringType, ArgString&&...) -> table<StringType, MetaType>;
 }

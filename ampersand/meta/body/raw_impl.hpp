@@ -3,20 +3,29 @@
 #include <ampersand/meta/meta.hpp>
 
 namespace ampersand::meta::body {
+
+    template <typename... T>
+    struct __raw_meta_to_mp11;
+
+    template <typename... MetaAttr>
+    struct __raw_meta_to_mp11<meta_type<MetaAttr...>> {
+        using type = boost::mp11::mp_list<MetaAttr...>;
+    };
+
     template <typename... T>
     struct __raw_size;
 
     template <typename AttrT, typename... AttrRemaining>
     struct __raw_size<meta_type<AttrT, AttrRemaining...>> {
         static constexpr std::size_t value
-            = sizeof(typename AttrT::attribute_type)
+            = sizeof(typename AttrT::value_type)
                 + __raw_size<meta_type<AttrRemaining...>>::value;
     };
 
     template <typename AttrT>
     struct __raw_size<meta_type<AttrT>> {
         static constexpr std::size_t value
-            = sizeof(typename AttrT::attribute_type);
+            = sizeof(typename AttrT::value_type);
     };
 
     template <>
@@ -35,7 +44,7 @@ namespace ampersand::meta::body {
         static constexpr std::size_t value
             = (std::is_same_v<T, AttrT>)
                     ? 0
-                    : sizeof(typename AttrT::attribute_type)
+                    : sizeof(typename AttrT::value_type)
                         + __raw_offset<T, meta_type<AttrRemaining...>>::value;
     };
 
@@ -44,7 +53,7 @@ namespace ampersand::meta::body {
         static constexpr std::size_t value
             = (std::is_same_v<T, AttrT>)
                     ? 0
-                    : sizeof(typename AttrT::attribute_type);
+                    : sizeof(typename AttrT::value_type);
     };
 
     template <typename T>

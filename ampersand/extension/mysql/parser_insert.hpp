@@ -4,23 +4,18 @@
 
 namespace ampersand::extension::mysql {
 	template
-		<typename... TableAttr, typename... RowFieldT>
+		<typename StringType, typename TableType, typename RowType>
 	class 
-		parser
-			<schema::syntax::insert
-				<schema::table<meta::meta_type<TableAttr...>>, 
-					schema::row<RowFieldT...>>>				 {
-		using __syntax = schema::syntax::insert<schema::table<meta::meta_type<TableAttr...>>, schema::row<RowFieldT...>>;
-			  __syntax _M_Syntax;
+		parser<StringType, schema::syntax::insert<TableType, RowType>> {
+		using __syntax = schema::syntax::insert<TableType, RowType>;
+			  __syntax& _M_Syntax;
 	public:
-		using syntax_type = __syntax;
-		using string_type = std::string;
-		using row_type    = schema::row<RowFieldT...>;
+		using syntax_type = __syntax  ;
+		using string_type = StringType;
 
 		parser(__syntax& pSyntax) : _M_Syntax(pSyntax) {}
-		syntax_type& get_syntax()					   { return _M_Syntax; }
-
-		string_type operator()() {
+		syntax_type& get_syntax() { return _M_Syntax; }
+		string_type  operator()() {
 			string_type parsed;
 			__parse_insert_impl(_M_Syntax, parsed);
 
@@ -29,17 +24,16 @@ namespace ampersand::extension::mysql {
 	};
 
 	template
-		<typename... TableAttr>
+		<typename StringType,
+			typename TableType, typename RowType, typename Condition>
 	class 
 		parser
-			<schema::syntax::insert
-				<schema::table<meta::meta_type<TableAttr...>>>>	 {
-		using __syntax = schema::syntax::insert<schema::table<meta::meta_type<TableAttr...>>>;
-			  __syntax _M_Syntax;
+			<StringType, schema::syntax::insert<TableType, RowType, Condition>>	 {
+		using __syntax = schema::syntax::insert<TableType, RowType, Condition>;
+			  __syntax& _M_Syntax;
 	public:
-		using syntax_type = __syntax;
-		using string_type = std::string;
-		using row_type    = schema::row<TableAttr...>;
+		using syntax_type = __syntax  ;
+		using string_type = StringType;
 
 		parser(__syntax& pSyntax) : _M_Syntax(pSyntax) {}
 		syntax_type& get_syntax()					   { return _M_Syntax; }

@@ -7,17 +7,15 @@ namespace ampersand::meta {
     class meta_object;
 
     template <typename BodyT, typename... AttributeT>
-    class meta_object     <BodyT, meta_type<AttributeT...>>
+    class meta_object            <BodyT, meta_type<AttributeT...>>
         : public meta_object_base<BodyT, meta_type<AttributeT...>> {
         using base_type = meta_object_base<BodyT, meta_type<AttributeT...>>;
     public:
-        using meta_type            =          meta_type<AttributeT...>       ;
-        using body_type            = typename base_type::body_type           ;
         using attribute_field_type = typename base_type::attribute_field_type;
 
     public:
-        meta_object(BodyT, meta_type) : base_type() {} // For CTAD Support
-        meta_object()                 : base_type() {}
+        meta_object(BodyT, meta_type<AttributeT...>) : base_type() {} // For CTAD Support
+        meta_object()                                : base_type() {}
 
     public:
         attribute_field_type& attribute_field() {
@@ -25,30 +23,33 @@ namespace ampersand::meta {
         }
     public:
         template <typename RBodyT, typename... RAttributeT>
-        auto& operator=(meta_object<RBodyT, meta::meta_type<RAttributeT...>>& pRhs) {
+        auto& 
+            operator=
+                (meta_object<RBodyT, meta::meta_type<RAttributeT...>>& pRhs) {
             __adapt_object(*this, pRhs);
             return *this;
         }
         
         template <typename Attribute>
-        auto& operator[](Attribute) { return this->_M_Get(Attribute{}); }
+        typename Attribute::value_type& 
+            operator[](Attribute) { 
+                return this->_M_Get(Attribute{}); 
+        }
     };
 
-    template <typename... AttributeT>
-    class meta_object                     <body::tag, meta_type<AttributeT...>>
-        : public meta_object_base         <body::tag, meta_type<AttributeT...>> {
-        using base_type = meta_object_base<body::tag, meta_type<AttributeT...>>;
+    template <typename KeyType, typename... AttributeT>
+    class meta_object                     <body::tag<KeyType>, meta_type<AttributeT...>>
+        : public meta_object_base         <body::tag<KeyType>, meta_type<AttributeT...>> {
+        using base_type = meta_object_base<body::tag<KeyType>, meta_type<AttributeT...>>;
     public:
-        using meta_type            =          meta_type<AttributeT...>       ;
-        using body_type            = typename base_type::body_type           ;
         using attribute_field_type = typename base_type::attribute_field_type;
 
-        using index_type           = typename base_type::index_type;
-        using name_type            = typename base_type::name_type ;
+        using index_type = typename base_type::index_type;
+        using key_type   = typename base_type::key_type  ;
 
     public:
-        meta_object(body::tag, meta_type) : base_type() {} // For CTAD Support
-        meta_object()                     : base_type() {}
+        meta_object(body::tag<KeyType>, meta_type<AttributeT...>) : base_type() {} // For CTAD Support
+        meta_object()                                             : base_type() {}
 
     public:
         attribute_field_type& attribute_field() {
@@ -62,9 +63,10 @@ namespace ampersand::meta {
         }
         
         template <typename Attribute>
-        auto&      operator[](Attribute) { return this->_M_Get     (Attribute{}); }
+        auto&      operator[](Attribute)     { return this->_M_Get       (Attribute{}); }
+        auto&      operator[](key_type pKey) { return this->_M_Get_By_Key(pKey)       ; }
         template <typename Attribute>
-        name_type& name_of   (Attribute) { return this->_M_Get_Name(Attribute{}); }
+        key_type&  key_of    (Attribute)     { return this->_M_Get_Key(Attribute{}); }
     };
 
     template <typename BodyT, typename MetaType>

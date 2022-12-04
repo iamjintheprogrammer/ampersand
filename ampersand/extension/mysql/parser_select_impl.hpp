@@ -1,22 +1,25 @@
 #pragma once
 #include <ampersand/extension/mysql/parser_binary_impl.hpp>
+#include <ampersand/schema/syntax/select.hpp>
 
 namespace ampersand::extension::mysql {
-		template
-		<typename... AttrT, typename... RowFieldT,
-				typename CondVerb, typename LCond, typename RCond>
+	template
+		<typename TableType, typename... TableAttr, typename... RowFieldT, 
+			typename Condition, typename StringType>
 	void
 		__parse_select_impl
 			(schema::syntax::select
-				<schema::table<meta::meta_type<AttrT...>>,
-					schema::row<RowFieldT...>,
-						schema::syntax::binary_condition<CondVerb, LCond, RCond>>& pSelect,
-			 std::string& pParsed) {
-		pParsed += "SELECT ";
-		[&pParsed, &pSelect] <std::size_t... RowIdx>
-			(std::index_sequence<RowIdx...>) {
-				((pParsed += (pSelect.get_table()[typename RowFieldT::field_meta_type{}] + ",")), ...);
-		}(std::make_index_sequence<sizeof...(RowFieldT)>{});
+				<schema::table<TableType, meta::meta_type<TableAttr...>>,
+					meta::meta_type<RowFieldT...>, Condition>& pSelect,
+				StringType&&								   pParsed) {
+		if constexpr
+			(std::is_same_v
+				<meta::meta_type<TableAttr...>, meta::meta_type<RowFieldT...>>)
+			pParsed += "SELECT * ";
+		else {
+			  pParsed += "SELECT ";
+			((pParsed += (pSelect.get_table()[RowFieldT{}] + ",")), ...);
+		}
 
 		pParsed.pop_back();
 		pParsed += " FROM "
@@ -24,57 +27,29 @@ namespace ampersand::extension::mysql {
 				+  " WHERE ";
 
 		__parse_binary_condition
-			(pSelect.get_table(),
-				schema::syntax::binary_condition<CondVerb, LCond, RCond>{},
-					pParsed);
+			(pSelect.get_table(), Condition{}, pParsed);
 	}
 
 	template
-		<typename... AttrT,
-			typename CondVerb, typename LCond, typename RCond>
+		<typename TableType, typename... TableAttr, 
+			typename... RowFieldT, typename StringType>
 	void
 		__parse_select_impl
 			(schema::syntax::select
-				<schema::table<meta::meta_type<AttrT...>>,
-					schema::syntax::binary_condition<CondVerb, LCond, RCond>>& pSelect,
-			 std::string& pParsed) {
-		pParsed += "SELECT * FROM ";
-		pParsed += pSelect.get_table().name()
-				+  " WHERE ";
-		
-		__parse_binary_condition
-			(pSelect.get_table(),
-				schema::syntax::binary_condition<CondVerb, LCond, RCond>{},
-					pParsed);
-	}
+				<schema::table<TableType, meta::meta_type<TableAttr...>>,
+					meta::meta_type<RowFieldT...>>& pSelect,
+				StringType&& pParsed) {
+		if constexpr
+			(std::is_same_v
+				<meta::meta_type<TableAttr...>, meta::meta_type<RowFieldT...>>)
+			pParsed += "SELECT * ";
+		else {
+			  pParsed += "SELECT ";
+			((pParsed += (pSelect.get_table()[RowFieldT{}] + ",")), ...);
+			  pParsed.pop_back();
+		}
 
-	template
-		<typename... AttrT, typename... RowFieldT>
-	void
-		__parse_select_impl
-			(schema::syntax::select
-				<schema::table<meta::meta_type<AttrT...>>,
-					schema::row<RowFieldT...>>& pSelect,
-			 std::string& pParsed) {
-		pParsed += "SELECT ";
-		[&pParsed, &pSelect] <std::size_t... RowIdx>
-			(std::index_sequence<RowIdx...>) {
-				((pParsed += (pSelect.get_table()[typename RowFieldT::field_meta_type{}] + ",")), ...);
-		}(std::make_index_sequence<sizeof...(RowFieldT)>{});
-
-		pParsed.pop_back();
 		pParsed += " FROM "
 				+  pSelect.get_table().name();
-	}
-
-	template
-		<typename... AttrT>
-	void
-		__parse_select_impl
-			(schema::syntax::select
-				<schema::table<meta::meta_type<AttrT...>>>& pSelect,
-			 std::string& pParsed) {
-		pParsed += "SELECT * FROM ";
-		pParsed += pSelect.get_table().name();
 	}
 }
