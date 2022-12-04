@@ -4,9 +4,12 @@
 #include <ampersand/extension/mysql/connection.hpp>
 
 namespace ampersand::extension::mysql {
-	class writer {
-		connection& _M_WrConn;
-	public:
+	template <typename... AnyType>
+	class writer;
 
+	template <typename BodyT, typename Parser>
+	class writer<BodyT, Parser> {
+	public:
+		
 	};
 }

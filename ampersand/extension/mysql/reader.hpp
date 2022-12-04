@@ -21,6 +21,7 @@ namespace ampersand::extension::mysql {
 		
 	public:
 		 reader(BodyT, connection&, parser_type&);
+		 reader(BodyT, connection&, parser_type&&);
 		~reader()								 {  }
 	};
 
@@ -53,7 +54,17 @@ namespace ampersand::extension::mysql {
 		(BodyT, connection& pRdConn, parser_type& pRdParser) {
 		auto		sql_statement = pRdConn._M_Base->createStatement();
 		_M_RdBase = sql_statement->executeQuery(pRdParser().c_str());
-		_M_RdBase->next();
+		if(!_M_RdBase->next())
+			_M_RdBase = nullptr;
+	}
+
+	template <typename BodyT, typename ParserType>
+	reader<BodyT, ParserType>::reader
+		(BodyT, connection& pRdConn, parser_type&& pRdParser) {
+		auto		sql_statement = pRdConn._M_Base->createStatement();
+		_M_RdBase = sql_statement->executeQuery(pRdParser().c_str());
+		if(!_M_RdBase->next())
+			_M_RdBase = nullptr;
 	}
 
 	template

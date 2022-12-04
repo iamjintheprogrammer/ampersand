@@ -2,10 +2,17 @@
 #include <fstream>
 
 #include <ampersand/meta/meta.hpp>
+#include <ampersand/meta/body/tag.hpp>
+#include <ampersand/meta/meta_object.hpp>
+
 #include <ampersand/extension/json/reader_impl.hpp>
 
 namespace ampersand::extension::json {
-	class reader {
+	template <typename... AnyType>
+	class reader;
+
+	template <typename BodyT, typename... AttrT>
+	class reader<meta::meta_object<BodyT, meta::meta_type<AttrT...>>> {
 		using  __rdobj    = Json::Value;
 		using  __rdstr    = Json::String;
 		using  __rdent	  = Json::CharReaderBuilder;
@@ -15,21 +22,24 @@ namespace ampersand::extension::json {
 		__rdstream _M_ReaderStream;
 		
 	public:
-		reader(const char* pName)
-				  : _M_ReaderStream(pName),
-				    _M_Reader	   ()	  {
-			_M_Reader["collectComments"] = false;
-		}
-		~reader() { _M_ReaderStream.close(); }
+		using value_type = meta::meta_object<BodyT, meta::meta_type<AttrT...>>;
+		reader (const char*);
+		~reader()			{ _M_ReaderStream.close(); }
 
 	public:
-		template <typename MetaObject>
-		bool read_from(MetaObject&);
+		value_type operator()();
 	};
 
-	template <typename MetaObject>
-	bool 
-		reader::read_from(MetaObject& pObject) {
+	template <typename BodyT, typename... AttrT>
+	reader<meta::meta_object<BodyT, meta::meta_type<AttrT...>>>::reader
+		(const char* pName)
+			: _M_ReaderStream(pName),
+			  _M_Reader	     ()	    { _M_Reader["collectComments"] = false; }
+
+	template <typename BodyT, typename... AttrT>
+	typename
+		reader<meta::meta_object<BodyT, meta::meta_type<AttrT...>>>::value_type
+			reader<meta::meta_object<BodyT, meta::meta_type<AttrT...>>>::operator()() {
 			__rdobj json_object;
 			__rdstr json_error_string;
 

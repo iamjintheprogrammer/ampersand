@@ -8,9 +8,9 @@ struct ex1_annotation : annotation {};
 struct ex2_annotation : annotation {};
 struct ex3_annotation : annotation {};
 
-using  ex1_attribute = attribute<int		  , ex1_annotation>;
-using  ex2_attribute = attribute<std::uint64_t, ex2_annotation>;
-using  ex3_attribute = attribute<float		  , ex3_annotation>;
+using  ex1_attribute  = attribute<int		   , ex1_annotation>;
+using  ex2_attribute  = attribute<std::uint64_t, ex2_annotation>;
+using  ex3_attribute  = attribute<float		   , ex3_annotation>;
 
 void example_table() {
 	meta_type MetaTable { ex1_attribute{}, ex2_attribute{}, ex3_attribute{} };
