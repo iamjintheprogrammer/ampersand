@@ -72,4 +72,8 @@ if(BUILD_EXAMPLES)
         if(AMPERSAND_FEATURE_SCHEMA)
                 add_subdirectory(example/schema)
         endif()
+
+        if(AMPERSAND_FEATURE_POLY)
+                add_subdirectory(example/poly)
+        endif()
 endif()
