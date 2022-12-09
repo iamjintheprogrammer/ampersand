@@ -2,31 +2,25 @@
 #include <string>
 #include <iostream>
 #include <ampersand/poly/poly_object.hpp>
-#include <ampersand/poly/poly_module.hpp>
+#include <ampersand/poly/poly_binary.hpp>
 
 namespace ampersand::poly {
 	template <>
 	class poly_object<> { // Describe "Any" Type.
-		using __string_type = std::string;
-			  __string_type _M_Name;
+		template <typename... AnyType> friend class poly_object;
+		using __operand_type = machine::operand;
+			  __operand_type _M_Operand;
 	public:
-		using value_type  = void;
-		using string_type = std::string;
-
 		template <typename... PolyObjects>
-		poly_object (string_type, PolyObjects&&...);
+		poly_object (const char*, PolyObjects&&...);
 		poly_object (); // Temporary Object
 		poly_object (poly_object&);
 		poly_object (poly_object&&);
 		~poly_object();
 
 	public:
-		string_type  type_name();
-		string_type&	  name();
-
-	public:
-		poly_object<>								     operator[](string_type);
-		template <typename... ArgObject>  poly_object<>  operator()(string_type, ArgObject&&...);
+		poly_object<>								     operator[](const char*);
+		template <typename... ArgObject>  poly_object<>  operator()(const char*, ArgObject&&...);
 		template <typename... ObjectType> poly_object<>& operator= (poly_object<ObjectType...>&);
 										  poly_object<>& operator= (poly_object<>&);
 										  poly_object<>& operator= (poly_object<>&&);
@@ -46,77 +40,56 @@ namespace ampersand::poly {
 
 	template <typename... PolyObjects>
 	poly_object<>::poly_object
-		(string_type pName, PolyObjects&&... pArgument)
-			: _M_Name(pName) {
-		auto& cur_module	   = poly_module::current();
-			  cur_module.push_enter();
-		auto  cur_inst
-			= instruction(instruction_verb::ob_create, "", 
-				operand("", pName), operand(pArgument.type_name(), pArgument.name())...);
-
-		cur_module.push_instruction(cur_inst);
-		cur_module.push_leave	   ();
+		(const char* pName, PolyObjects&&... pArgument) : _M_Operand("", pName) {
+		auto& cur_module = poly_binary::current();
+			  cur_module.push_enter		   ();
+			  cur_module.push_object_create(_M_Operand, pArgument._M_Operand...);
+			  cur_module.push_leave	       ();
 	}
 
 	template <typename... ArgObject>
 	poly_object<>
-		poly_object<>::operator() (string_type pName, ArgObject&&... pArgs) {
-			auto& cur_module = poly_module::current();
+		poly_object<>::operator() (const char* pName, ArgObject&&... pArgs) {
+			auto& cur_module = poly_binary::current();
 				  cur_module.push_enter();
-			auto  cur_inst
-				= instruction(instruction_verb::call_method, pName,
-					operand("", "")		,
-					operand("", _M_Name),
-					operand(pArgs.type_name(), pArgs.name())...);
+				  cur_module.push_call_method
+					(pName, _M_Operand, machine::operand("", ""), pArgs._M_Operand...);
 
-			cur_module.push_instruction(cur_inst);
 			return poly_object<>{};
 	}
 
 	template <typename... ObjectType>
 	poly_object<>& 
 		poly_object<>::operator= (poly_object<ObjectType...>& pCopy) {
-			auto& cur_module = poly_module::current();
-			  cur_module.push_enter();
-			auto  cur_inst
-				= instruction(instruction_verb::move_shallow, "",
-					operand("", _M_Name),
-					operand(pCopy.type_name(), pCopy.name()));
-
-			cur_module.push_instruction(cur_inst);
-			cur_module.push_leave	   ();
+			auto& cur_module = poly_binary::current();
+				  cur_module.push_enter		  ();
+				  cur_module.push_shallow_move(_M_Operand, pCopy._M_Operand);
+				  cur_module.push_leave	      ();
 			return *this;
 	}
 	
 	template <typename RhsType>
 	poly_object<>  
 		poly_object<>::operator+(RhsType&& pRhsObject) {
-			auto& cur_module = poly_module::current();
+			machine::operand op_return("", "");
+			auto& cur_module = poly_binary::current();
 				  cur_module.push_enter();
+				  cur_module.push_primitive_operator
+						(machine::instruction_verb::op_add, 
+							op_return, _M_Operand, pRhsObject._M_Operand);
 
-			auto  cur_inst
-				= instruction(instruction_verb::op_add, "",
-					operand("", ""),
-					operand("", _M_Name),
-					operand(pRhsObject.type_name(), pRhsObject.name()));
-
-			cur_module.push_instruction(cur_inst);
 			return poly_object<>{};
 	}
 
 	template <typename RhsType>
 	poly_object<>&
 		poly_object<>::operator+=(RhsType&& pRhsObject) {
-			auto& cur_module = poly_module::current();
+			auto& cur_module = poly_binary::current();
 				  cur_module.push_enter();
-
-			auto  cur_inst
-				= instruction(instruction_verb::op_addeq, "",
-					operand("", _M_Name),
-					operand(pRhsObject.type_name(), pRhsObject.name()));
-
-			cur_module.push_instruction(cur_inst);
-			cur_module.push_leave	   ();
+				  cur_module.push_primitive_operator
+						(machine::instruction_verb::op_addeq,
+							_M_Operand, _M_Operand, pRhsObject._M_Operand);
+				  cur_module.push_leave();
 
 			return *this;
 	}
@@ -124,32 +97,25 @@ namespace ampersand::poly {
 	template <typename RhsType>
 	poly_object<>
 		poly_object<>::operator-(RhsType&& pRhsObject) {
-			auto& cur_module = poly_module::current();
+			machine::operand op_return("", "");
+			auto& cur_module = poly_binary::current();
 				  cur_module.push_enter();
+				  cur_module.push_primitive_operator
+						(machine::instruction_verb::op_sub,
+							op_return, _M_Operand, pRhsObject._M_Operand);
 
-			auto  cur_inst
-				= instruction(instruction_verb::op_sub, "",
-					operand("", ""),
-					operand("", _M_Name),
-					operand(pRhsObject.type_name(), pRhsObject.name()));
-
-			cur_module.push_instruction(cur_inst);
 			return poly_object<>{};
 	}
 
 	template <typename RhsType>
 	poly_object<>&
 		poly_object<>::operator-=(RhsType&& pRhsObject) {
-			auto& cur_module = poly_module::current();
+			auto& cur_module = poly_binary::current();
 				  cur_module.push_enter();
-
-			auto  cur_inst
-				= instruction(instruction_verb::op_subeq, "",
-					operand("", _M_Name),
-					operand(pRhsObject.type_name(), pRhsObject.name()));
-
-			cur_module.push_instruction(cur_inst);
-			cur_module.push_leave	   ();
+				  cur_module.push_primitive_operator
+						(machine::instruction_verb::op_subeq,
+							_M_Operand, _M_Operand, pRhsObject._M_Operand);
+				  cur_module.push_leave();
 
 			return *this;
 	}
@@ -157,32 +123,25 @@ namespace ampersand::poly {
 	template <typename RhsType>
 	poly_object<>
 		poly_object<>::operator*(RhsType&& pRhsObject) {
-			auto& cur_module = poly_module::current();
+			machine::operand op_return("", "");
+			auto& cur_module = poly_binary::current();
 				  cur_module.push_enter();
+				  cur_module.push_primitive_operator
+						(machine::instruction_verb::op_mul,
+							op_return, _M_Operand, pRhsObject._M_Operand);
 
-			auto  cur_inst
-				= instruction(instruction_verb::op_mul, "",
-					operand("", ""),
-					operand("", _M_Name),
-					operand(pRhsObject.type_name(), pRhsObject.name()));
-
-			cur_module.push_instruction(cur_inst);
 			return poly_object<>{};
 	}
 
 	template <typename RhsType>
 	poly_object<>&
 		poly_object<>::operator*=(RhsType&& pRhsObject) {
-			auto& cur_module = poly_module::current();
+			auto& cur_module = poly_binary::current();
 				  cur_module.push_enter();
-
-			auto  cur_inst
-				= instruction(instruction_verb::op_muleq, "",
-					operand("", _M_Name),
-					operand(pRhsObject.type_name(), pRhsObject.name()));
-
-			cur_module.push_instruction(cur_inst);
-			cur_module.push_leave	   ();
+				  cur_module.push_primitive_operator
+						(machine::instruction_verb::op_muleq,
+							_M_Operand, _M_Operand, pRhsObject._M_Operand);
+				  cur_module.push_leave();
 
 			return *this;
 	}
@@ -190,32 +149,25 @@ namespace ampersand::poly {
 	template <typename RhsType>
 	poly_object<>
 		poly_object<>::operator/(RhsType&& pRhsObject) {
-			auto& cur_module = poly_module::current();
+			machine::operand op_return("", "");
+			auto& cur_module = poly_binary::current();
 				  cur_module.push_enter();
+				  cur_module.push_primitive_operator
+						(machine::instruction_verb::op_div,
+							op_return, _M_Operand, pRhsObject._M_Operand);
 
-			auto  cur_inst
-				= instruction(instruction_verb::op_div, "",
-					operand("", ""),
-					operand("", _M_Name),
-					operand(pRhsObject.type_name(), pRhsObject.name()));
-
-			cur_module.push_instruction(cur_inst);
 			return poly_object<>{};
 	}
 
 	template <typename RhsType>
 	poly_object<>&
 		poly_object<>::operator/=(RhsType&& pRhsObject) {
-			auto& cur_module = poly_module::current();
+			auto& cur_module = poly_binary::current();
 				  cur_module.push_enter();
-
-			auto  cur_inst
-				= instruction(instruction_verb::op_diveq, "",
-					operand("", _M_Name),
-					operand(pRhsObject.type_name(), pRhsObject.name()));
-
-			cur_module.push_instruction(cur_inst);
-			cur_module.push_leave	   ();
+				  cur_module.push_primitive_operator
+						(machine::instruction_verb::op_diveq,
+							_M_Operand, _M_Operand, pRhsObject._M_Operand);
+				  cur_module.push_leave();
 
 			return *this;
 	}

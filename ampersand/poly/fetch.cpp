@@ -3,12 +3,12 @@
 using namespace ampersand::poly;
 
 fetch::fetch()
-	: _M_Module(poly_module::current()) {
+	: _M_Module(poly_binary::current()) {
 		_M_Iterator = _M_Module._M_Instruction.begin();
 }
 
-instruction& fetch::peek	 () { return *_M_Iterator; }
-instruction& fetch::peek_prev() {
+machine::instruction& fetch::peek	 () { return *_M_Iterator; }
+machine::instruction& fetch::peek_prev() {
 	if(_M_Iterator != _M_Module._M_Instruction.begin()) {
 		auto it_peek = _M_Iterator;
 		   --it_peek;
@@ -19,7 +19,7 @@ instruction& fetch::peek_prev() {
 		return *_M_Iterator;
 }
 
-instruction& fetch::peek_next() {
+machine::instruction& fetch::peek_next() {
 	if(_M_Iterator != _M_Module._M_Instruction.end()) {
 		auto it_peek = _M_Iterator;
 		   ++it_peek;
@@ -37,12 +37,12 @@ fetch::operator bool() {
 }
 
 fetch_line::fetch_line()
-	: _M_Module(poly_module::current()) {
+	: _M_Module(poly_binary::current()) {
 	_M_ModuleIterator = _M_Module._M_Instruction.begin();
 }
 
 fetch_line::iterator::iterator
-	(poly_module::__instruction::iterator pIterator)
+	(poly_binary::__instruction::iterator pIterator)
 		: _M_Iterator(pIterator){
 }
 
@@ -81,7 +81,7 @@ bool
 	return pRhs._M_Iterator != _M_Iterator;
 }
 
-instruction&
+machine::instruction&
 	fetch_line::iterator::operator*() {
 		return *_M_Iterator;
 }
@@ -91,8 +91,8 @@ bool fetch_line::parse_next() {
 		return false;
 	_M_LineInstruction.clear();
 
-	while ((*_M_ModuleIterator).verb() != instruction_verb::leave) {
-		if((*_M_ModuleIterator).verb() == instruction_verb::enter) {
+	while ((*_M_ModuleIterator).verb() != machine::instruction_verb::leave) {
+		if((*_M_ModuleIterator).verb() == machine::instruction_verb::enter) {
 			++_M_ModuleIterator;
 			continue;
 		}

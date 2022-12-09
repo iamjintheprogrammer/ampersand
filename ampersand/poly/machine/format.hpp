@@ -1,18 +1,19 @@
 #pragma once
-#include <ampersand/poly/instruction.hpp>
+#include <ampersand/poly/machine/instruction.hpp>
+#include <ampersand/poly/machine/format_category.hpp>
 
-namespace ampersand::poly {
-	class decoder_base {
+namespace ampersand::poly::machine {
+	class format_base {
 	protected:
 		instruction& _M_Instruction;
-		decoder_base(instruction&);
+		format_base(instruction&);
 	public:
 		using string_type = std::string;
 		class argument_iterator {
-			friend class decoder_base;
+			friend class format_base;
 			instruction::__argvec::iterator _M_Iterator;
 		protected:
-			argument_iterator(decoder_base&, bool);
+			argument_iterator(format_base&, bool);
 		public:
 			operand&		   operator* ();
 			argument_iterator& operator++();
@@ -28,13 +29,6 @@ namespace ampersand::poly {
 		argument_iterator   end_args();
 	};
 
-	class decoder : public decoder_base {
-	public:
-		using string_type = std::string;
-
-		decoder(instruction&);
-	public:
-		string_type function_name ();
-		operand&    return_operand();
-	};
+	template <typename DecoderCategory>
+	class format;
 }

@@ -1,9 +1,8 @@
 #include <iostream>
 #include <ampersand/poly/poly_any.hpp>
 #include <ampersand/poly/fetch.hpp>
-#include <ampersand/poly/decoder.hpp>
-
-#include <ampersand/poly/python/desc_instruction.hpp>
+#include <ampersand/poly/poly_binary.hpp>
+#include <ampersand/poly/python/describer.hpp>
 
 int main() {
 	std::string ParsedString;
@@ -16,30 +15,14 @@ int main() {
 
 		AnyObject2 = AnyObject["Test"]["Test2"]["Test3"]["Test4"];
 		AnyObject2 = AnyObject + AnyObject3 + AnyObject4 + AnyObject5;
-		AnyObject("TestMethod1", AnyObject, AnyObject2);
+		AnyObject("TestMethod1", AnyObject, AnyObject2)
+				 ("TestMethod2")
+				 ("TestMethod3");
 	}
 
-	auto& Module     = ampersand::poly::poly_module::current();
+	auto& Module     = ampersand::poly::poly_binary::current();
 	auto  LineParser = ampersand::poly::fetch_line();
-	auto  Parser     = ampersand::poly::fetch();
+	auto  LineParsed = ampersand::poly::python::describer<>().describe(LineParser);
 
-	while (LineParser.parse_next()) {
-		std::string line;
-		auto Begin = LineParser.begin_point();
-		auto End   = LineParser.end_point  ();
-
-		if (Begin == End)
-			continue;
-
-		while (Begin != End) {
-			auto Decoder = ampersand::poly::decoder(*Begin);
-			ampersand::poly::python::invoke_describer_unit
-				((*Begin).verb(), Decoder, line);
-			Begin++;
-		}
-		if (!line.empty())
-			ParsedString += line + "\n";
-	}
-
-	std::cout << ParsedString << std::endl;
+	std::cout << LineParsed << std::endl;
 }
