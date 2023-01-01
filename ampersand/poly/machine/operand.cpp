@@ -60,10 +60,42 @@ namespace ampersand::poly::machine {
 			return *this;
 	}
 
+	// Primitive Object
+	operand::primitive::primitive
+		(category pCategory, string_type pName)
+			: _M_Name	 (pName),
+			  _M_Category(pCategory) { }
+
+	operand::primitive::primitive
+		(const char* pInitValue, string_type pName)
+			: _M_Name	 (pName),
+			  _M_Category(category::str) {}
+
+	operand::primitive::primitive
+		(const wchar_t* pInitValue, string_type pName)
+			: _M_Name	 (pName),
+			  _M_Category(category::wstr) {}
+
+	operand::primitive::category
+		operand::primitive::get_category() {
+			return _M_Category;
+	}
+
+	operand::primitive::string_type
+		operand::primitive::name() {
+			return _M_Name;
+	}
+
 	operand::operand
 		(string_type pTypeName, string_type pName)
 			: _M_Category	   (category::object),
 			  _M_Operand_Object(new object(pTypeName, pName)) {
+	}
+
+	operand::operand
+		(primitive::category pCategory, string_type pName)
+			: _M_Category		  (category::primitive),
+			  _M_Operand_Primitive(new primitive(pCategory, pName)) {
 	}
 
 	operand::operand(const char* pConstant)
@@ -93,6 +125,11 @@ namespace ampersand::poly::machine {
 			_M_Operand_Object   = new object(*pCopy._M_Operand_Object);
 			return;
 		}
+
+		if (_M_Category == category::primitive) {
+			_M_Operand_Primitive = new primitive(*pCopy._M_Operand_Primitive);
+			return;
+		}
 	}
 
 	operand::operand(const operand&& pMove)
@@ -112,6 +149,11 @@ namespace ampersand::poly::machine {
 
 		if (_M_Category == category::object) {
 			delete _M_Operand_Object;
+			return;
+		}
+
+		if (_M_Category == category::primitive) {
+			delete _M_Operand_Primitive;
 			return;
 		}
 	}
@@ -134,6 +176,14 @@ namespace ampersand::poly::machine {
 			return false;
 
 		pConstant = *_M_Operand_Constant;
+		return true;
+	}
+
+	bool operand::get_operand(primitive& pConstant) {
+		if (_M_Category != category::primitive)
+			return false;
+
+		pConstant = *_M_Operand_Primitive;
 		return true;
 	}
 

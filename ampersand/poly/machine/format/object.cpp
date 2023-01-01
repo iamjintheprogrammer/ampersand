@@ -22,10 +22,32 @@ namespace ampersand::poly::machine {
 
 	format<format_category::create_object>::string_type
 		format<format_category::create_object>::name() {
-			operand::object				instance("", "");
-			_M_Op_Instance->get_operand(instance);
+			if(_M_Op_Instance->operand_category()
+					== operand::category::primitive) {
+				operand::primitive		    op_primitive(0, "");
+				_M_Op_Instance->get_operand(op_primitive);
 
-			return instance.name();
+				return op_primitive.name();
+			}
+			else {
+				operand::object				op_instance("", "");
+				_M_Op_Instance->get_operand(op_instance);
+
+				return op_instance.name();
+			}
+	}
+
+	operand::primitive::category
+		format<format_category::create_object>::primitive_category() {
+			if(_M_Op_Instance->operand_category()
+					!= operand::category::primitive)
+						return operand::primitive::category::non_primitive;
+			else {
+				operand::primitive			op_primitive(0, "");
+				_M_Op_Instance->get_operand(op_primitive);
+
+				return op_primitive.get_category();
+			}
 	}
 
 	format<format_category::create_object>::argument_iterator
@@ -59,10 +81,32 @@ namespace ampersand::poly::machine {
 
 	format<format_category::delete_object>::string_type
 		format<format_category::delete_object>::name() {
-			operand::object				instance("", "");
-			_M_Op_Instance->get_operand(instance);
+			if(_M_Op_Instance->operand_category()
+					== operand::category::primitive) {
+				operand::primitive		    op_primitive(0, "");
+				_M_Op_Instance->get_operand(op_primitive);
 
-			return instance.name();
+				return op_primitive.name();
+			}
+			else {
+				operand::object				op_instance("", "");
+				_M_Op_Instance->get_operand(op_instance);
+
+				return op_instance.name();
+			}
+	}
+
+	operand::primitive::category
+		format<format_category::delete_object>::primitive_category() {
+			if(_M_Op_Instance->operand_category()
+					!= operand::category::primitive)
+						return operand::primitive::category::non_primitive;
+			else {
+				operand::primitive			op_primitive(0, "");
+				_M_Op_Instance->get_operand(op_primitive);
+
+				return op_primitive.get_category();
+			}
 	}
 
 	format<format_category::reference_object>::format
@@ -88,10 +132,32 @@ namespace ampersand::poly::machine {
 
 	format<format_category::reference_object>::string_type
 		format<format_category::reference_object>::name() {
-			operand::object				instance("", "");
-			_M_Op_Instance->get_operand(instance);
+			if(_M_Op_Instance->operand_category()
+					== operand::category::primitive) {
+				operand::primitive		    op_primitive(0, "");
+				_M_Op_Instance->get_operand(op_primitive);
 
-			return instance.name();
+				return op_primitive.name();
+			}
+			else {
+				operand::object				op_instance("", "");
+				_M_Op_Instance->get_operand(op_instance);
+
+				return op_instance.name();
+			}
+	}
+
+	operand::primitive::category
+		format<format_category::reference_object>::primitive_category() {
+			if(_M_Op_Instance->operand_category()
+					!= operand::category::primitive)
+						return operand::primitive::category::non_primitive;
+			else {
+				operand::primitive			op_primitive(0, "");
+				_M_Op_Instance->get_operand(op_primitive);
+
+				return op_primitive.get_category();
+			}
 	}
 
 	operand&

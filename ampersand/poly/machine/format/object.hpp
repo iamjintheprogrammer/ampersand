@@ -16,8 +16,9 @@ namespace ampersand::poly::machine {
 		~format();
 
 	public:
-		string_type type_name();
-		string_type  	 name();
+		operand::primitive::category primitive_category();
+		string_type					 type_name		   ();
+		string_type  				 name			   ();
 
 	public:
 		argument_iterator argument_begin();
@@ -35,8 +36,9 @@ namespace ampersand::poly::machine {
 		~format();
 
 	public:
-		string_type type_name();
-		string_type  	 name();
+		operand::primitive::category primitive_category();
+		string_type					 type_name		   ();
+		string_type  				 name			   ();
 	};
 
 	template <>
@@ -52,9 +54,10 @@ namespace ampersand::poly::machine {
 		~format();
 
 	public:
-		string_type		 type_name();
-		string_type  		  name();
-		operand&    return_operand();
-		operand&			   key();
+		operand::primitive::category primitive_category();
+		string_type					 type_name		   ();
+		string_type  				 name			   ();
+		operand&				     return_operand    ();
+		operand&				     key			   ();
 	};
 }

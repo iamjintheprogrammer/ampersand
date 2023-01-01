@@ -7,6 +7,8 @@ add_library(ampersand.poly STATIC
             poly_object.hpp
             poly_any.hpp
             poly_any.cpp
+            poly_interface.hpp
+            poly_interface_impl.hpp
             machine/instruction.hpp
             machine/instruction_verb.hpp
             machine/instruction.cpp
@@ -25,6 +27,10 @@ add_library(ampersand.poly STATIC
             machine/format/object.cpp
             machine/format/move.hpp
             machine/format/move.cpp
+            types/integral.hpp
+            types/floating_point.hpp
+            types/floating_point.cpp
+            types/primitive.hpp
             declare.hpp
             declare.cpp
             fetch.hpp

@@ -119,13 +119,25 @@ namespace ampersand::poly::python {
 		machine::format
 			<machine::format_category::create_object>
 				inst_fmt   (pInstruction);
-		pString += inst_fmt.name()
-				+  "="
-				+  inst_fmt.type_name()
-				+  '(';
 
 		auto arg_begin = inst_fmt.argument_begin();
-		auto arg_end   = inst_fmt.argument_end  ();
+		auto arg_end   = inst_fmt.argument_end();
+
+		if(inst_fmt.primitive_category()
+				!= machine::operand::primitive::category::non_primitive) {
+			machine::operand::constant op_init(0);
+			(*arg_begin).get_operand  (op_init);
+
+			pString += inst_fmt.name()
+					+ '='
+					+ op_init.get_string_value();
+			return;
+		}
+
+		pString += inst_fmt.name()
+				+ "="
+				+ inst_fmt.type_name()
+				+ '(';
 
 		if (arg_begin != arg_end) {
 			for ( ; arg_begin != arg_end; ++arg_begin) {
@@ -283,7 +295,7 @@ namespace ampersand::poly::python {
 		move_shallow
 			(machine::instruction& pInstruction, std::string& pString) {
 		machine::format
-			<machine::format_category::shallow_move> inst_move(pInstruction);
+			<machine::format_category::deep_move> inst_move(pInstruction);
 
 		machine::operand::object			ob_dst("", "");
 		inst_move.destination().get_operand(ob_dst);

@@ -1,59 +1,69 @@
 #pragma once
-#include <ampersand/schema/table_impl.hpp>
-
-#include <ampersand/meta/body/tag.hpp>
-#include <ampersand/meta/utility/trait.hpp>
-#include <ampersand/meta/utility/trait_concept.hpp>
+#include <ampersand/meta.hpp>
 
 namespace ampersand::schema {
 	template <typename... AnyType>
 	class table;
 
-	template <typename StringType, typename... Attributes>
-	class table<StringType, meta::meta_type<Attributes...>> {
-		using __name_tuple = __table_name_tuple<Attributes...>::type;
-		using __string	   = std::string;
-
-			  __name_tuple _M_Name		;
-			  __string	   _M_Table_Name;
+	template <meta::concepts::primitive_attribute... Attr>
+	class table<meta::meta_type<Attr...>> {
+		using __base_type = meta::meta_type<Attr...>;
+			  __base_type _M_BaseType;
 	public:
-		using string_type = StringType;
-
+		using base_type = meta::meta_type<Attr...>;
+		table(base_type&);
+		
 	public:
-		template <typename... ArgString>
-		table(meta::meta_type<Attributes...>, string_type, ArgString&&...); // Create Table
-
-	public:
-		template <typename AttrT>
-		string_type& operator[](AttrT);
-		string_type& name	   ();
+		template <typename BodyTrait> void		  push	(meta::basic_meta_object<base_type, BodyTrait>&);
+									  void		  update(meta::concepts::meta_operator auto, meta::concepts::copy auto...);
+									  void		  pop	(meta::concepts::meta_operator auto);
+									  const char* name  ();
 	};
 
-	template <typename StringType, typename... Attributes>
-	template <typename... ArgString>
-	table<StringType, meta::meta_type<Attributes...>>::table
-		(meta::meta_type<Attributes...>,
-			string_type pName, ArgString&&... pString) // Create Table
-			: _M_Table_Name(pName) {
-		if constexpr (sizeof...(ArgString) == sizeof...(Attributes))
-			_M_Name = std::make_tuple(string_type(pString)...);
+	template <meta::concepts::primitive_attribute... Attr>
+	table<meta::meta_type<Attr...>>::table
+		(base_type& pBaseType)
+			: _M_BaseType(pBaseType) {}
+	
+	template <meta::concepts::primitive_attribute... Attr>
+	template <typename BodyTrait>
+	void 
+		table<meta::meta_type<Attr...>>::push
+			(meta::basic_meta_object<base_type, BodyTrait>& pPush) {
+		
 	}
 
-	template <typename StringType, typename... Attributes>
-	template <typename AttrT>
-	typename table<StringType, meta::meta_type<Attributes...>>::string_type&
-		table<StringType, meta::meta_type<Attributes...>>::operator[](AttrT pAttribute) {
+	template <meta::concepts::primitive_attribute... Attr>
+	void 
+		table<meta::meta_type<Attr...>>::update
+			(meta::concepts::meta_operator auto pCondition,
+			 meta::concepts::copy auto...		pCopy) {
+	}
+
+	template <meta::concepts::primitive_attribute... Attr>
+	void 
+		table<meta::meta_type<Attr...>>::pop
+			(meta::concepts::meta_operator auto pCondition) {
+	}
+
+	template <meta::concepts::primitive_attribute... Attr>
+	const char*
+		table<meta::meta_type<Attr...>>::name() {
 			return
-				__name_from_tuple
-					(pAttribute, meta::meta_type<Attributes...>{}, _M_Name);
+				_M_BaseType.type_name();
 	}
+}
 
-	template <typename StringType, typename... Attributes>
-	typename table<StringType, meta::meta_type<Attributes...>>::string_type&
-		table<StringType, meta::meta_type<Attributes...>>::name() {
-			return _M_Table_Name;
-	}
+namespace ampersand::schema::utility {
+	template <typename... AnyType>
+	struct is_table									 : std::false_type {};
+	template <meta::concepts::primitive_attribute... Attr>
+	struct is_table<table<meta::meta_type<Attr...>>> : std::true_type  {};
+	template <typename... AnyType>
+	inline constexpr bool is_table_v = is_table<AnyType...>::value;
+}
 
-	template <typename MetaType, typename StringType, typename... ArgString>
-	table(MetaType, StringType, ArgString&&...) -> table<StringType, MetaType>;
+namespace ampersand::schema::concepts {
+	template <typename... AnyType>
+	concept table = utility::is_table_v<AnyType...>;
 }

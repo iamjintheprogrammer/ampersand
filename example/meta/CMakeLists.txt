@@ -3,5 +3,5 @@ project(ampersand.example.meta
         VERSION 0.1.0
         LANGUAGES CXX)
 
-add_executable(example.meta.attribute attribute.cpp)
-add_executable(example.meta.body      body.cpp)
+add_executable(example.meta.type   meta_type.cpp)
+add_executable(example.meta.object meta_object.cpp)

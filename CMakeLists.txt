@@ -6,6 +6,7 @@ project(ampersand
 add_subdirectory   (submodule/mp11)
 add_subdirectory   (submodule/jsoncpp)
 set                (CMAKE_CXX_STANDARD 20)
+set                (CMAKE_C_STANDARD   11)
 
 option(AMPERSAND_BUILD_EXAMPLES ON)
 
@@ -51,7 +52,10 @@ if(AMPERSAND_FEATURE_SCHEMA)
 endif()
 
 if(AMPERSAND_FEATURE_POLY)
+        include_directories(${CMAKE_SOURCE_DIR}/submodule/crisp)
+        add_subdirectory(poly_machine)
         add_subdirectory(ampersand/poly)
+        add_subdirectory(submodule/crisp)
 endif()
 
 if(BUILD_EXAMPLES)
