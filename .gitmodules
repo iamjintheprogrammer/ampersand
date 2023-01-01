@@ -7,3 +7,7 @@
 [submodule "submodule/jsoncpp"]
 	path = submodule/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp
+[submodule "submodule/crisp"]
+	path = submodule/crisp
+	url = https://github.com/gunnerDgd/crisp
+	branch = Alpha/0.1.0
