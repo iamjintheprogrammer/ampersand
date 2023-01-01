@@ -25,9 +25,9 @@ namespace ampersand::meta {
 		template <typename BodyType> static auto  equal			  (body_type&, BodyType&&);
 		template <typename BodyType> static auto  not_equal		  (body_type&, BodyType&&);
  
-		template <typename BodyType> static auto  move			  (body_type&, BodyType&&);
-		template <typename BodyType> static auto  move_deep		  (body_type&, BodyType&&);
-		template <typename BodyType> static auto  move_shallow	  (body_type&, BodyType&&);
+		template <typename BodyType> static auto  clone(body_type&, BodyType&&);
+		template <typename BodyType> static auto  copy (body_type&, BodyType&&);
+		template <typename BodyType> static auto  move (body_type&, BodyType&&);
 	};
 
 	template <typename... Attributes>
@@ -123,7 +123,7 @@ namespace ampersand::meta {
 	template <typename... Attributes>
 	template <typename BodyType>
 	auto
-		body_traits<meta_type<Attributes...>>::move_deep
+		body_traits<meta_type<Attributes...>>::clone
 			(body_type& pLhs, BodyType&& pRhs) {
 		if constexpr
 			(!std::is_array_v
@@ -137,7 +137,7 @@ namespace ampersand::meta {
 	template <typename... Attributes>
 	template <typename BodyType>
 	auto
-		body_traits<meta_type<Attributes...>>::move_shallow
+		body_traits<meta_type<Attributes...>>::copy
 			(body_type& pLhs, BodyType&& pRhs) {
 		if constexpr
 			(!std::is_array_v

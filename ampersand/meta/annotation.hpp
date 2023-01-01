@@ -1,6 +1,5 @@
 #pragma once
 #include <type_traits>
-#include <ampersand/meta/details/annotation.hpp>
 
 namespace ampersand::meta {
     template <typename... AnyType>
@@ -10,17 +9,38 @@ namespace ampersand::meta {
     class annotation<AnnotateType> {
         AnnotateType _M_Value;
     public:
-        using value_type       = AnnotateType;
-        constexpr annotation() = default;
+        using      value_type =      AnnotateType;
+        using       reference =       value_type&;
+        using const_reference = const value_type&;
+        using       pointer   =       value_type*;
+        using const_pointer   = const value_type*;
+
+        template <typename... InitArgs>
+        constexpr annotation(InitArgs&&...);
+        constexpr annotation(reference)    ;
+
+        constexpr annotation(const annotation&)  = default;
+        constexpr annotation      (annotation&&) = default;
+
+    public:
+        constexpr const_reference operator*();
     };
 
-    inline constexpr annotation   <__public_attr>    public_attribute;
-    inline constexpr annotation  <__private_attr>   private_attribute;
-    inline constexpr annotation<__protected_attr> protected_attribute;
-    
-    inline constexpr annotation <__dynamic_attr>    dynamic_attribute;
-    inline constexpr annotation  <__static_attr>     static_attribute;
-    inline constexpr annotation<__constant_attr>   constant_attribute;
+    template <typename AnnotateType>
+    template <typename... InitArgs>
+    constexpr annotation<AnnotateType>::annotation
+        (InitArgs&&... pInitArgs)
+            : _M_Value(pInitArgs...) {  }
+
+    template <typename AnnotateType>
+    constexpr annotation<AnnotateType>::annotation(reference pCopyValue)
+        : _M_Value(pCopyValue) {}
+
+    template <typename AnnotateType>
+    constexpr annotation<AnnotateType>::const_reference
+        annotation<AnnotateType>::operator*() {
+            return _M_Value;
+    }
 }
 
 namespace ampersand::meta::utility {
