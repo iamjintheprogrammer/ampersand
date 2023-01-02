@@ -25,9 +25,18 @@ namespace ampersand::meta {
 
     };
 
-    template <>
+    template <> // Any Type
     struct meta_type<> {
-        constexpr meta_type() {}
+        using      value_type = void ;
+        using       reference = void;
+        using const_reference = void;
+        using         pointer = void;
+        using   const_pointer = void;
+
+        constexpr meta_type() {  }
+
+    public:
+        AMPERSAND_ENABLE_META_OPERATOR
     };
 
     template <>
@@ -181,8 +190,10 @@ namespace ampersand::meta {
     template <typename... AttributeT>
     meta_type(AttributeT...)->meta_type<AttributeT...>;
 
-    using u8 = meta_type<std::uint8_t>;
-    using i8 = meta_type<std::int8_t>;
+    using any = meta_type<>;
+
+    using u8  = meta_type<std::uint8_t>;
+    using i8  = meta_type<std::int8_t>;
 
     using u16 = meta_type<std::uint16_t>;
     using i16 = meta_type<std::int16_t>;
@@ -234,4 +245,80 @@ namespace ampersand::meta::utility {
 namespace ampersand::meta::concepts {
     template <typename... AnyType> concept meta_type = utility::is_meta_type_v     <AnyType...>;
     template <typename... AnyType> concept primitive = utility::is_primitive_type_v<AnyType...>;
+}
+
+namespace ampersand::meta {
+    template <concepts::meta_type R, concepts::meta_type... Args>
+    struct meta_type<R(Args...)> {
+    private:
+        using __string_view = std::string_view;
+              __string_view _M_Name;
+
+    public:
+        using      value_type =       R   (Args...);
+        using       reference =       R(&)(Args...);
+        using const_reference = const R(&)(Args...);
+        using         pointer =       R(*)(Args...);
+        using   const_pointer = const R(*)(Args...);
+
+    public:
+        meta_type(const char* pName) : _M_Name(pName) {}
+
+        template <concepts::meta_type... InArgs>
+        auto operator()(InArgs&&... pArgs) {
+            return
+                meta_operator<invoke, std::remove_reference_t<Args...>>
+                    { pArgs... };
+        }
+    };
+
+    template <concepts::meta_type C, concepts::meta_type R, concepts::meta_type... Args>
+    struct meta_type<C, R(C, Args...)> {
+    private:
+        using __string_view = std::string_view;
+              __string_view _M_Name;
+
+    public:
+        using      value_type =       R   (Args...);
+        using       reference =       R(&)(Args...);
+        using const_reference = const R(&)(Args...);
+        using         pointer =       R(*)(Args...);
+        using   const_pointer = const R(*)(Args...);
+
+    public:
+        meta_type(const char* pName) : _M_Name(pName) {}
+
+        template <typename... InArgs>
+        auto operator()(C pObject, InArgs&&... pArgs) {
+            return
+                meta_operator
+                    <invoke_method, C, std::remove_reference_t<Args...>>
+                        { pObject, pArgs... };
+        }
+    };
+
+    template <concepts::meta_type C, concepts::meta_type R, concepts::meta_type... Args>
+    struct meta_type<C, R(Args...)> {
+    private:
+        using __string_view = std::string_view;
+              __string_view _M_Name;
+
+    public:
+        using      value_type =       R   (Args...);
+        using       reference =       R(&)(Args...);
+        using const_reference = const R(&)(Args...);
+        using         pointer =       R(*)(Args...);
+        using   const_pointer = const R(*)(Args...);
+
+    public:
+        meta_type(const char* pName) : _M_Name(pName) {}
+
+        template <concepts::meta_type... InArgs>
+        auto operator()(InArgs&&... pArgs) {
+            return
+                meta_operator
+                    <invoke_static_method, std::remove_reference_t<Args...>>
+                        { pArgs... };
+        }
+    };
 }

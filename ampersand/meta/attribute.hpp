@@ -1,9 +1,9 @@
 #pragma once
 #include <string_view>
-#include <boost/mp11.hpp>
 
 #include <ampersand/meta/annotation.hpp>
 #include <ampersand/meta/meta.hpp>
+#include <ampersand/meta/operator.hpp>
 
 namespace ampersand::meta {
     template <typename... AnyType>
@@ -32,17 +32,7 @@ namespace ampersand::meta {
         const char*       name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
 
         template <concepts::annotation AnnotType> 
-        auto operator|  (AnnotType) { 
-            return attribute<MetaType, Annotation..., AnnotType>{}; 
-        }
-
-        template <concepts::annotation AnnotType> 
-        auto operator[] (AnnotType) {
-            return
-                boost::mp11::mp_find
-                    <boost::mp11::mp_list<Annotation...>, AnnotType>::value
-                        != sizeof...(Annotation);
-        }
+        auto operator[] (AnnotType) { return std::get<AnnotType>(_M_Annotation); }
 
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -62,16 +52,6 @@ namespace ampersand::meta {
         const value_type& type() { return _M_Meta; }
         const char*       name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
 
-        template <concepts::annotation AnnotType> 
-        auto operator|  (AnnotType) { 
-            return attribute<MetaType, AnnotType>{}; 
-        }
-
-        template <concepts::annotation AnnotType> 
-        auto operator[] (AnnotType) {
-            return false;
-        }
-
         AMPERSAND_ENABLE_META_OPERATOR
     };
 
@@ -88,20 +68,8 @@ namespace ampersand::meta {
                 : _M_Name      (pName),
                   _M_Annotation(pAnnotation) {}// For CTAD Support
 
-        const char* name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
-
-        template <concepts::annotation AnnotType> 
-        auto operator|  (AnnotType) { 
-            return attribute<MetaType, Annotation..., AnnotType>{}; 
-        }
-
-        template <concepts::annotation AnnotType> 
-        auto operator[] (AnnotType) {
-            return
-                boost::mp11::mp_find
-                    <boost::mp11::mp_list<Annotation...>, AnnotType>::value
-                        != sizeof...(Annotation);
-        }
+                                              const char* name          ()      { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
+        template <concepts::annotation Annot> auto        get_annotation(Annot) { return std::get<Annot>(_M_Annotation); }
 
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -116,16 +84,6 @@ namespace ampersand::meta {
             : _M_Name(pName) {} // For CTAD Support
 
         const char* name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
-
-        template <concepts::annotation AnnotType> 
-        auto operator|  (AnnotType) { 
-            return attribute<MetaType, AnnotType>{}; 
-        }
-
-        template <concepts::annotation AnnotType> 
-        auto operator[] (AnnotType) {
-            return false;
-        }
 
         AMPERSAND_ENABLE_META_OPERATOR
     };

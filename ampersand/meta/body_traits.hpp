@@ -2,7 +2,7 @@
 #include <cstring>
 #include <algorithm>
 
-#include <ampersand/meta/details/body_traits_impl.hpp>
+#include <ampersand/meta/body_traits_impl.hpp>
 #include <ampersand/meta/meta_object.hpp>
 
 namespace ampersand::meta {
@@ -11,23 +11,144 @@ namespace ampersand::meta {
 
 	template <typename... Attributes>
 	struct body_traits<meta_type<Attributes...>> {
-		using body_type = typename details::body_type<meta_type<Attributes...>>::type;
+		using body_type		   = typename details::body_type<meta_type<Attributes...>>::type;
+		using meta_object_type = basic_meta_object<meta_type<Attributes...>, body_traits<meta_type<Attributes...>>>;
 
 		template <typename KeyType>  static auto& get(body_type&, KeyType); // For Generic Meta Type
-									 static auto& get(body_type&);			// For Primitive Meta Type
+									 static auto& get(body_type&);			 // For Primitive Meta Type
 
-		template <typename BodyType> static auto  greater_than    (body_type&, BodyType&&);
-		template <typename BodyType> static auto  greater_or_equal(body_type&, BodyType&&);
+		static void construct(body_type&, const char*) {  }
+		static void destruct (body_type&)			   {  }
 
-		template <typename BodyType> static auto  less_than	      (body_type&, BodyType&&);
-		template <typename BodyType> static auto  less_or_equal   (body_type&, BodyType&&);
+		template <typename RhsObject>
+		static auto
+			equal
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::equal{}, pLhs, pRhs };
+		}
 
-		template <typename BodyType> static auto  equal			  (body_type&, BodyType&&);
-		template <typename BodyType> static auto  not_equal		  (body_type&, BodyType&&);
- 
-		template <typename BodyType> static auto  clone(body_type&, BodyType&&);
-		template <typename BodyType> static auto  copy (body_type&, BodyType&&);
-		template <typename BodyType> static auto  move (body_type&, BodyType&&);
+		template <typename RhsObject>
+		static auto
+			not_equal
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::not_equal{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			greater_than
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::greater_than{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			greater_or_equal
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::greater_or_equal{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			less_than
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::less_than{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			less_or_equal
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::less_or_equal{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			add
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::add{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			add_and_store
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::add_and_store{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			subtract
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::subtract{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			subtract_and_store
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::subtract_and_store{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			multiply
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::multiply{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			multiply_and_store
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::multiply_and_store{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			divide
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::divide{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			divide_and_store
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator{ meta::divide_and_store{}, pLhs, pRhs };
+		}
+
+		template <typename RhsObject>
+		static auto
+			move
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator
+					{ meta::move{}, pLhs, pRhs };
+		}
+		
+		template <typename RhsObject>
+		static auto
+			copy
+				(meta_object_type& pLhs, RhsObject&& pRhs) {
+			return
+				meta_operator
+					{ meta::copy{}, pLhs, pRhs };
+		}
 	};
 
 	template <typename... Attributes>
@@ -39,10 +160,8 @@ namespace ampersand::meta {
 			(!utility::is_primitive_type_v<meta_type<Attributes...>>,
 				"[AMPERSAND][BODY_TRAITS] Primitive Meta Type Does not Support Key-Base Acquisition.");
 		return
-			*reinterpret_cast<basic_meta_object
-				<typename KeyType::value_type, body_traits<typename KeyType::value_type>>*>
-					(reinterpret_cast<std::uint8_t*>(pBody)
-						+ details::body_offset<0, KeyType, Attributes...>::value);
+			meta_operator
+				{ meta::reference{}, pBody, pKey };
 	}
 
 	template <typename... Attributes>
@@ -56,95 +175,5 @@ namespace ampersand::meta {
 			*reinterpret_cast
 				<meta_type<Attributes...>::pointer>
 					(pBody);
-	}
-
-	template <typename... Attributes>
-	template <typename BodyType>
-	auto
-		body_traits<meta_type<Attributes...>>::greater_than
-			(body_type& pLhs, BodyType&& pRhs) {
-		return;
-	}
-
-	template <typename... Attributes>
-	template <typename BodyType>
-	auto
-		body_traits<meta_type<Attributes...>>::greater_or_equal
-			(body_type& pLhs, BodyType&& pRhs) {
-		return;
-	}
-
-	template <typename... Attributes>
-	template <typename BodyType>
-	auto
-		body_traits<meta_type<Attributes...>>::less_than
-			(body_type& pLhs, BodyType&& pRhs) {
-		return;
-	}
-
-	template <typename... Attributes>
-	template <typename BodyType>
-	auto
-		body_traits<meta_type<Attributes...>>::less_or_equal
-			(body_type&, BodyType&&) {
-		return;
-	}
-
-	template <typename... Attributes>
-	template <typename BodyType>
-	auto
-		body_traits<meta_type<Attributes...>>::equal
-			(body_type&, BodyType&&) {
-		return;
-	}
-
-	template <typename... Attributes>
-	template <typename BodyType>
-	auto
-		body_traits<meta_type<Attributes...>>::not_equal
-			(body_type&, BodyType&&) {
-		return;
-	}
-
-	template <typename... Attributes>
-	template <typename BodyType>
-	auto
-		body_traits<meta_type<Attributes...>>::move
-			(body_type& pLhs, BodyType&& pRhs) {
-		if constexpr
-			(!std::is_array_v
-				<std::remove_reference_t<BodyType>>)
-					return;
-		
-		std::memcpy
-			(pLhs, pRhs, std::min(sizeof(body_type), sizeof(BodyType)));
-	}
-
-	template <typename... Attributes>
-	template <typename BodyType>
-	auto
-		body_traits<meta_type<Attributes...>>::clone
-			(body_type& pLhs, BodyType&& pRhs) {
-		if constexpr
-			(!std::is_array_v
-				<std::remove_reference_t<BodyType>>)
-					return;
-		
-		std::memcpy
-			(pLhs, pRhs, std::min(sizeof(body_type), sizeof(BodyType)));
-	}
-
-	template <typename... Attributes>
-	template <typename BodyType>
-	auto
-		body_traits<meta_type<Attributes...>>::copy
-			(body_type& pLhs, BodyType&& pRhs) {
-		if constexpr
-			(!std::is_array_v
-				<std::remove_reference_t<BodyType>>)
-					return;
-		
-		std::memcpy
-			(pLhs, pRhs, std::min(sizeof(body_type), sizeof(BodyType)));
 	}
 }

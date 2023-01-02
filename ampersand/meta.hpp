@@ -3,7 +3,7 @@
 #include <ampersand/meta/annotation.hpp>
 
 #include <ampersand/meta/operator.hpp>
-#include <ampersand/meta/operator_verb.hpp>
+#include <ampersand/meta/verb.hpp>
 
 #include <ampersand/meta/meta.hpp>
 #include <ampersand/meta/body_traits.hpp>

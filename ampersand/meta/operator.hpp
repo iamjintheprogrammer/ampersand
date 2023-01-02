@@ -2,56 +2,27 @@
 #include <tuple>
 #include <type_traits>
 
-#include <ampersand/meta/operator_verb.hpp>
-#include <ampersand/meta/details/operator.hpp>
+#include <ampersand/meta/verb.hpp>
+#include <ampersand/meta/operator_impl.hpp>
 
 namespace ampersand::meta {
 	template <typename Verb, typename... Operand>
 	class meta_operator {
-		static_assert(sizeof...(Operand) > 0, "[AMPERSAND][META] No Operand Provided.");
 		using __tuple = std::tuple<Operand...>;
 			  __tuple _M_Base;
-	
+
 	public:
 		using verb = Verb;
+		template <std::size_t Idx> constexpr auto get_operand();
+		constexpr meta_operator(verb, Operand... pOperand) : _M_Base(pOperand...) {} // For CTAD Support
+		constexpr meta_operator		 (Operand... pOperand) : _M_Base(pOperand...) {}
 
-		meta_operator(verb, Operand&... pOperand) : _M_Base(pOperand...) {}
-		meta_operator	   (Operand&... pOperand) : _M_Base(pOperand...) {}
-
-		template <std::size_t Idx>	   constexpr auto get_operand();
-
-		template <typename... RhsType> auto operator+  (meta_operator<RhsType...>&);
-		template <typename... RhsType> auto operator+= (meta_operator<RhsType...>&);
-
-		template <typename... RhsType> auto operator-  (meta_operator<RhsType...>&);
-		template <typename... RhsType> auto operator-= (meta_operator<RhsType...>&);
-
-		template <typename... RhsType> auto operator*  (meta_operator<RhsType...>&);
-		template <typename... RhsType> auto operator*= (meta_operator<RhsType...>&);
-
-		template <typename... RhsType> auto operator/  (meta_operator<RhsType...>&);
-		template <typename... RhsType> auto operator/= (meta_operator<RhsType...>&);
-
-		template <typename... RhsType> auto operator<  (meta_operator<RhsType...>&);
-		template <typename... RhsType> auto operator<= (meta_operator<RhsType...>&);
-
-		template <typename... RhsType> auto operator>  (meta_operator<RhsType...>&);
-		template <typename... RhsType> auto operator>= (meta_operator<RhsType...>&);
-
-		template <typename... RhsType> auto operator== (meta_operator<RhsType...>&);
-		template <typename... RhsType> auto operator!= (meta_operator<RhsType...>&);
-
-		template <typename... RhsType> auto operator&& (meta_operator<RhsType...>&);
-		template <typename... RhsType> auto operator|| (meta_operator<RhsType...>&);
-
-		template <typename... RhsType> auto operator= (meta_operator<RhsType...>&) ;
-		template <typename... RhsType> auto operator= (meta_operator<RhsType...>&&);
-
-									   auto operator!  ();
+		AMPERSAND_DECLARE_META_OPERATOR
 	};
 
 	template <typename Verb, typename... Operand>
-	meta_operator(Verb, Operand&...) -> meta_operator<Verb, Operand...>;
+	meta_operator(Verb, Operand&&...)
+		-> meta_operator<Verb, std::remove_reference_t<Operand>...>;
 
 	template <typename Verb, typename... Operand>
 	template <std::size_t Idx>
@@ -59,222 +30,6 @@ namespace ampersand::meta {
 		meta_operator<Verb, Operand...>::get_operand() {
 			return
 				std::get<Idx>(_M_Base);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto 
-		meta_operator<Verb, Operand...>::operator+
-			(meta_operator<RhsType...>& pRhs) {
-		return
-			meta_operator
-				<add,
-				 meta_operator<Verb, Operand...>,
-				 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto
-		meta_operator<Verb, Operand...>::operator+=
-			(meta_operator<RhsType...>& pRhs) {
-		return
-			meta_operator
-				<add_and_store,
-				 meta_operator<Verb, Operand...>,
-				 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto
-		meta_operator<Verb, Operand...>::operator-
-			(meta_operator<RhsType...>& pRhs) {
-		return
-			meta_operator
-				<subtract,
-				 meta_operator<Verb, Operand...>,
-				 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto
-		meta_operator<Verb, Operand...>::operator-=
-			(meta_operator<RhsType...>& pRhs) {
-		return
-			meta_operator
-				<subtract_and_store,
-				 meta_operator<Verb, Operand...>,
-				 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto
-		meta_operator<Verb, Operand...>::operator*
-			(meta_operator<RhsType...>& pRhs) {
-		return
-			meta_operator
-				<multiply,
-				 meta_operator<Verb, Operand...>,
-				 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto
-		meta_operator<Verb, Operand...>::operator*=
-			(meta_operator<RhsType...>& pRhs) {
-		return
-			meta_operator
-				<multiply_and_store,
-				 meta_operator<Verb, Operand...>,
-				 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto
-		meta_operator<Verb, Operand...>::operator/
-			(meta_operator<RhsType...>& pRhs) {
-		return
-			meta_operator
-				<divide,
-				 meta_operator<Verb, Operand...>,
-				 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto
-		meta_operator<Verb, Operand...>::operator/=
-			(meta_operator<RhsType...>& pRhs) {
-		return
-			meta_operator
-				<divide_and_store,
-				 meta_operator<Verb, Operand...>,
-				 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto 
-		meta_operator<Verb, Operand...>::operator<
-			(meta_operator<RhsType...>& pRhs) {
-		return
-			meta_operator
-				<less_than,
-				 meta_operator<Verb, Operand...>,
-				 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto meta_operator<Verb, Operand...>::operator<=
-		(meta_operator<RhsType...>& pRhs) {
-			return
-				meta_operator
-					<less_or_equal,
-					 meta_operator<Verb, Operand...>,
-					 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto meta_operator<Verb, Operand...>::operator>
-		(meta_operator<RhsType...>& pRhs) {
-			return
-				meta_operator
-					<greater_than,
-					 meta_operator<Verb, Operand...>,
-					 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto meta_operator<Verb, Operand...>::operator>=
-		(meta_operator<RhsType...>& pRhs) {
-			return
-				meta_operator
-					<greater_or_equal,
-					 meta_operator<Verb, Operand...>,
-					 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto meta_operator<Verb, Operand...>::operator==
-		(meta_operator<RhsType...>& pRhs) {
-			return
-				meta_operator
-					<equal,
-					 meta_operator<Verb, Operand...>,
-					 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-	
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto meta_operator<Verb, Operand...>::operator!=
-		(meta_operator<RhsType...>& pRhs) {
-			return
-				meta_operator
-					<not_equal,
-					 meta_operator<Verb, Operand...>,
-					 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto meta_operator<Verb, Operand...>::operator&&
-		(meta_operator<RhsType...>& pRhs) {
-			return
-				meta_operator
-					<and_with,
-					 meta_operator<Verb, Operand...>,
-					 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto meta_operator<Verb, Operand...>::operator||
-		(meta_operator<RhsType...>& pRhs) {
-			return
-				meta_operator
-					<or_with,
-					 meta_operator<Verb, Operand...>,
-					 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto meta_operator<Verb, Operand...>::operator=
-		(meta_operator<RhsType...>& pRhs) {
-			return
-				meta_operator
-					<copy,
-					 meta_operator<Verb, Operand...>,
-					 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	template <typename... RhsType>
-	auto meta_operator<Verb, Operand...>::operator=
-		(meta_operator<RhsType...>&& pRhs) {
-			return
-				meta_operator
-					<move,
-					 meta_operator<Verb, Operand...>,
-					 meta_operator<RhsType...>>  (*this, pRhs);
-	}
-
-	template <typename Verb, typename... Operand>
-	auto meta_operator<Verb, Operand...>::operator!  () {
-		return
-			meta_operator
-			<not_to,
-			 meta_operator<Verb, Operand...>>  (*this);
 	}
 }
 
@@ -418,6 +173,23 @@ namespace ampersand::meta::utility {
 	struct is_not_to<add_and_store, Operand...> : std::true_type {};
 	template <typename... AnyType>
 	inline constexpr bool is_not_to_v = is_not_to<AnyType...>::value;
+
+	template <typename... AnyType>
+	struct is_conditional_operator
+		: std::bool_constant
+			<
+				is_greater_than_v	 <AnyType> ||
+				is_greater_or_equal_v<AnyType> ||
+
+				is_less_than_v	     <AnyType> ||
+				is_less_or_equal_v   <AnyType> ||
+
+				is_equal_v			 <AnyType> ||
+				is_not_equal_v		 <AnyType>
+			> {};
+
+	template <typename AnyType>
+	inline constexpr bool is_conditional_operator_v = is_conditional_operator<AnyType>::value;
 }
 
 namespace ampersand::meta::concepts {
@@ -471,4 +243,7 @@ namespace ampersand::meta::concepts {
 
 	template <typename... AnyType>
 	concept not_to = utility::is_not_to_v<AnyType...>;
+
+	template <typename AnyType>
+	concept conditional_operator = utility::is_conditional_operator_v<AnyType>;
 }

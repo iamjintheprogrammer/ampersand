@@ -9,7 +9,9 @@ set                (CMAKE_C_STANDARD   11)
 option(AMPERSAND_BUILD_EXAMPLES ON)
 
 include_directories(${CMAKE_SOURCE_DIR})
+
 add_subdirectory(ampersand/meta)
+add_subdirectory(ampersand/diopter)
 
 if(AMPERSAND_BUILD_EXAMPLES)
         add_subdirectory(example/meta)
