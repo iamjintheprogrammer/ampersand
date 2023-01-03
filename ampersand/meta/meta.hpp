@@ -20,14 +20,26 @@ namespace ampersand::meta {
 
         AMPERSAND_ENABLE_META_OPERATOR
 
-        const char* type_name    ()           { return _M_Name.data(); }
-        auto&       get_attribute(auto pAttr) { return std::get<decltype(pAttr)>(_M_Attribute); }
-
+        const char* type_name() { return _M_Name.data(); }
+        template <std::size_t Idx, typename... Attributes> friend auto& get_attribute(meta_type<Attributes...>&);
+        template <typename Target, typename... Attributes> friend auto& get_attribute(meta_type<Attributes...>&);
     };
+
+    template <std::size_t Idx, typename... Attributes> 
+    auto& get_attribute(meta_type<Attributes...>& pMeta) {
+        return
+            std::get<Idx>(pMeta._M_Attribute);
+    }
+
+    template <typename Target, typename... Attributes> 
+    auto& get_attribute(meta_type<Attributes...>& pMeta) {
+        return
+            std::get<Target>(pMeta._M_Attribute);
+    }
 
     template <> // Any Type
     struct meta_type<> {
-        using      value_type = void ;
+        using      value_type = void;
         using       reference = void;
         using const_reference = void;
         using         pointer = void;

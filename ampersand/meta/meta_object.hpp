@@ -49,7 +49,7 @@ namespace ampersand::meta {
         type&       type_of() { return _M_Type; }
         const char* name   () { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
         
-                                       auto& operator[] (concepts::attribute auto pAttribute)       { return traits_type::get(_M_Body, pAttribute); }
+                                      auto& operator[] (concepts::attribute auto pAttribute)       { return traits_type::get(_M_Body, pAttribute); }
         
         template <typename RhsType>   auto  operator<  (RhsType&& pRhs) { return traits_type::less_than    (*this, pRhs); }
         template <typename RhsType>   auto  operator<= (RhsType&& pRhs) { return traits_type::less_or_equal(*this, pRhs); }
@@ -93,7 +93,7 @@ namespace ampersand::meta {
         body_type&  body() { return _M_Body; }
         const char* name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
         
-                                       auto& operator*  ()                                          { return traits_type::get(_M_Body); }
+                                      auto& operator*  ()               { return traits_type::get(_M_Body); }
         
         template <typename RhsType>   auto  operator<  (RhsType&& pRhs) { return traits_type::less_than    (*this, pRhs); }
         template <typename RhsType>   auto  operator<= (RhsType&& pRhs) { return traits_type::less_or_equal(*this, pRhs); }
