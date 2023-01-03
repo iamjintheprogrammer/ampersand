@@ -9,32 +9,42 @@ namespace ampersand::diopter {
 		using category	  = type_impl::type_category;
 		using string_type = std::string;
 
-		class primitive {
-			primitive_type_impl* _M_Impl;
-			primitive(primitive_type_impl&);
-		public:
-			using primitive_category = primitive_type_impl::primitive_category;
-
-			primitive_category category();
-		};
-
+		using primitive = primitive_type_impl;
 		class complex {
+			friend class type;
 			complex_type_impl* _M_Impl;
 			complex(complex_type_impl&);
 
 		public:
-			void  push_subtype(string_type, type&);
-			void  pop_subtype (string_type);
-			type* find_subtype(string_type);
+			class subtype {
+				complex_type_impl::table_type::iterator _M_Base;
+				complex_type_impl&						_M_Impl;
+			public:
+				subtype(complex&);
+
+				type::string_type name	  ();
+				type			  get_type();
+
+				subtype& operator++()   ;
+				subtype  operator++(int);
+						 operator bool();
+			};
+
+		public:
+			complex();
+
+			void push_subtype(string_type, type&);
+			void pop_subtype (string_type);
+			type find_subtype(string_type);
 		};
 
 	public:
-		type(category);
+		type();
+		type(string_type);
+		type(primitive);
 
-		string_type& type_name    ();
-		category	 type_category();
-
-		bool		 get_implemented_type(complex&)  ;
-		bool		 get_implemented_type(primitive&);
+		category type_category();
+		bool	 get_implemented_type(complex&)  ;
+		bool	 get_implemented_type(primitive&);
 	};
 }
