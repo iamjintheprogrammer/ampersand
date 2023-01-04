@@ -7,6 +7,9 @@
 namespace ampersand::diopter {
 	class type {
 		friend class symbol;
+		friend class scope ;
+		friend class object;
+
 		type_impl::type_ptr _M_Impl;
 
 		type(type_impl::type_ptr);
