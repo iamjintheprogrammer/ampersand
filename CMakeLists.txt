@@ -15,4 +15,5 @@ add_subdirectory(ampersand/diopter)
 
 if(AMPERSAND_BUILD_EXAMPLES)
         add_subdirectory(example/meta)
+        add_subdirectory(example/diopter)
 endif()

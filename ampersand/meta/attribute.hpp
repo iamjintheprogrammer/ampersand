@@ -28,8 +28,8 @@ namespace ampersand::meta {
                                           _M_Annotation(pAnnotation...),
                                           _M_Meta      (pMetaType)     {  }
 
-        const value_type& type() { return _M_Meta; }
-        const char*       name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
+        value_type& type() { return _M_Meta; }
+        const char* name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
 
         template <concepts::annotation AnnotType> 
         auto operator[] (AnnotType) { return std::get<AnnotType>(_M_Annotation); }
@@ -49,8 +49,8 @@ namespace ampersand::meta {
             : _M_Name(pName),
               _M_Meta(pMetaType) {} // For CTAD Support
 
-        const value_type& type() { return _M_Meta; }
-        const char*       name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
+        value_type& type() { return _M_Meta; }
+        const char* name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
 
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -68,8 +68,8 @@ namespace ampersand::meta {
                 : _M_Name      (pName),
                   _M_Annotation(pAnnotation) {}// For CTAD Support
 
-        const char*      name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
-        const value_type type() { return value_type {}; }
+        const char* name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
+        value_type  type() { return value_type {}; }
         template <concepts::annotation Annot> auto get_annotation(Annot) { return std::get<Annot>(_M_Annotation); }
 
         AMPERSAND_ENABLE_META_OPERATOR
@@ -84,8 +84,8 @@ namespace ampersand::meta {
         constexpr attribute(const char* pName)
             : _M_Name(pName) {} // For CTAD Support
 
-        const char*      name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
-        const value_type type() { return value_type{}; }
+        const char* name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
+        value_type  type() { return value_type{}; }
         
         AMPERSAND_ENABLE_META_OPERATOR
     };

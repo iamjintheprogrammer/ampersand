@@ -6,8 +6,11 @@
 
 namespace ampersand::diopter {
 	class type {
+		friend class symbol;
 		type_impl::type_ptr _M_Impl;
+
 		type(type_impl::type_ptr);
+		type();
 	public:
 		using name_type = type_impl::name_type;
 
@@ -16,10 +19,11 @@ namespace ampersand::diopter {
 								 type(meta::concepts::primitive auto&);
 
 	public:
-		name_type name		();
-		bool	  link_type (name_type, type&);
-		bool	  primitive ();
-		type	  operator[](name_type);
+		name_type name		   ();
+		bool	  link_type    (name_type, type&);
+		bool	  primitive	   ();
+		type	  operator[]   (name_type);
+				  operator bool();
 	};
 
 	template <typename... T>

@@ -5,6 +5,11 @@ namespace ampersand::diopter {
 	type_impl::type_union_impl:: type_union_impl(meta::primitive_category pPrimitive) : u_primitive(pPrimitive) {  }
 	type_impl::type_union_impl::~type_union_impl()																{  }
 
+	type_impl::type_impl
+		(meta::meta_type<>& pMetaType)
+			: _M_Impl_Union	   (meta::primitive_category::any),
+			  _M_Impl_Primitive(true)						  {  }
+
 	bool type_impl::link_type (name_type pName, type_ptr pImpl) {
 		if (pImpl->primitive() || _M_Impl_Primitive) return false;
 
@@ -27,4 +32,7 @@ namespace ampersand::diopter {
 	bool
 		type_impl::primitive()
 			{ return _M_Impl_Primitive; }
+
+	type_impl::name_type
+		type_impl::name() { return _M_Impl_TypeName; }
 }

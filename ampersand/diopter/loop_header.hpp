@@ -94,7 +94,7 @@ namespace ampersand::diopter {
 	};
 
 	template <typename... LoopElement>
-	loop_header(LoopElement...) -> loop_header<std::remove_reference_t<LoopElement...>>;
+	loop_header(LoopElement...) -> loop_header<std::remove_reference_t<LoopElement>...>;
 
 namespace utility {
 	template <typename AnyType>

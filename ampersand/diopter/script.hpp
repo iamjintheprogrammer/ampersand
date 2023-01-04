@@ -8,11 +8,11 @@ namespace utility		     {
 	struct is_script_element
 		: std::disjunction
 			<
-				utility::is_loop_v	   <AnyType>,
-				utility::is_condition_v<AnyType>,
+				utility::is_loop	 <AnyType>,
+				utility::is_condition<AnyType>,
 
-				meta::utility::is_meta_object_v<AnyType>,
-				meta::utility::is_meta_type_v  <AnyType>
+				meta::utility::is_meta_object<AnyType>,
+				meta::utility::is_meta_type  <AnyType>
 			>{};
 
 	template <typename AnyType>
