@@ -4,7 +4,18 @@
 
 #include <ampersand/meta/operator.hpp>
 
-namespace ampersand::meta {
+namespace ampersand::meta         {
+    enum class primitive_category {
+        i8 , u8,
+        i16, u16,
+        i32, u32,
+        i64, u64,
+
+        f32, f64,
+        any
+    };
+
+
     template <typename... Attributes>
     struct meta_type {
     private:
@@ -20,7 +31,7 @@ namespace ampersand::meta {
 
         AMPERSAND_ENABLE_META_OPERATOR
 
-        const char* type_name() { return _M_Name.data(); }
+        const char* type_id() { return _M_Name.data(); }
         template <std::size_t Idx, typename... Attributes> friend auto& get_attribute(meta_type<Attributes...>&);
         template <typename Target, typename... Attributes> friend auto& get_attribute(meta_type<Attributes...>&);
     };
@@ -45,7 +56,8 @@ namespace ampersand::meta {
         using         pointer = void;
         using   const_pointer = void;
 
-        constexpr meta_type() {  }
+        constexpr          meta_type() {  }
+        constexpr primitive_category type_id  () { return primitive_category::any; }
 
     public:
         AMPERSAND_ENABLE_META_OPERATOR
@@ -62,6 +74,8 @@ namespace ampersand::meta {
         constexpr meta_type()           {  }
         constexpr meta_type(value_type) {  }
 
+        constexpr primitive_category type_id() { return primitive_category::i8; }
+
     public:
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -76,6 +90,8 @@ namespace ampersand::meta {
 
         constexpr meta_type()           {  }
         constexpr meta_type(value_type) {  }
+
+        constexpr primitive_category type_id() { return primitive_category::u8; }
 
     public:
         AMPERSAND_ENABLE_META_OPERATOR
@@ -92,6 +108,8 @@ namespace ampersand::meta {
         constexpr meta_type()                        {  }
         constexpr meta_type(value_type)              {  }
 
+        constexpr primitive_category type_id() { return primitive_category::i16; }
+
     public:
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -106,6 +124,8 @@ namespace ampersand::meta {
 
         constexpr meta_type()                        {  }
         constexpr meta_type(value_type)              {  }
+
+        constexpr primitive_category type_id() { return primitive_category::u16; }
 
     public:
         AMPERSAND_ENABLE_META_OPERATOR
@@ -122,6 +142,8 @@ namespace ampersand::meta {
         constexpr meta_type()                        {  }
         constexpr meta_type(value_type)              {  }
 
+        constexpr primitive_category type_id() { return primitive_category::i32; }
+
     public:
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -137,6 +159,8 @@ namespace ampersand::meta {
         constexpr meta_type()                        {  }
         constexpr meta_type(value_type)              {  }
 
+        constexpr primitive_category type_id() { return primitive_category::u32; }
+
     public:
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -150,6 +174,8 @@ namespace ampersand::meta {
         using   const_pointer = const std::int64_t*;
         constexpr meta_type()                        {  }
         constexpr meta_type(value_type)              {  }
+
+        constexpr primitive_category type_id() { return primitive_category::i64; }
 
     public:
         AMPERSAND_ENABLE_META_OPERATOR
@@ -166,6 +192,8 @@ namespace ampersand::meta {
         constexpr meta_type()                        {  }
         constexpr meta_type(value_type)              {  }
 
+        constexpr primitive_category type_id() { return primitive_category::u64; }
+
     public:
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -180,6 +208,8 @@ namespace ampersand::meta {
         constexpr meta_type()                        {  }
         constexpr meta_type(value_type)              {  }
 
+        constexpr primitive_category type_id() { return primitive_category::f32; }
+
     public:
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -192,8 +222,10 @@ namespace ampersand::meta {
         using         pointer =       double*;
         using   const_pointer = const double*;
 
-        constexpr meta_type()                        {  }
-        constexpr meta_type(value_type)              {  }
+        constexpr meta_type()           {  }
+        constexpr meta_type(value_type) {  }
+
+        constexpr primitive_category type_id() { return primitive_category::f64; }
 
     public:
         AMPERSAND_ENABLE_META_OPERATOR
@@ -279,7 +311,7 @@ namespace ampersand::meta {
         template <concepts::meta_type... InArgs>
         auto operator()(InArgs&&... pArgs) {
             return
-                meta_operator<invoke, std::remove_reference_t<Args...>>
+                meta_operator<invoke, std::remove_reference_t<Args>...>
                     { pArgs... };
         }
     };

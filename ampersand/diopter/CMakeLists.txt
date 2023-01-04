@@ -6,10 +6,9 @@ add_library(ampersand.diopter STATIC
             loop.hpp
             condition.hpp
             script.hpp
-            describer.hpp
-            describer_trait.hpp
-            symbol.hpp
-            symbol.cpp)
+            type.hpp
+            type_impl.hpp
+            type.cpp
+            type_impl.cpp)
 
 set_target_properties(ampersand.diopter PROPERTIES LINKER_LANGUAGE CXX)
-add_subdirectory(engine)

@@ -68,8 +68,9 @@ namespace ampersand::meta {
                 : _M_Name      (pName),
                   _M_Annotation(pAnnotation) {}// For CTAD Support
 
-                                              const char* name          ()      { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
-        template <concepts::annotation Annot> auto        get_annotation(Annot) { return std::get<Annot>(_M_Annotation); }
+        const char*      name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
+        const value_type type() { return value_type {}; }
+        template <concepts::annotation Annot> auto get_annotation(Annot) { return std::get<Annot>(_M_Annotation); }
 
         AMPERSAND_ENABLE_META_OPERATOR
     };
@@ -83,8 +84,9 @@ namespace ampersand::meta {
         constexpr attribute(const char* pName)
             : _M_Name(pName) {} // For CTAD Support
 
-        const char* name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
-
+        const char*      name() { return (_M_Name.empty()) ? nullptr : _M_Name.data(); }
+        const value_type type() { return value_type{}; }
+        
         AMPERSAND_ENABLE_META_OPERATOR
     };
 
