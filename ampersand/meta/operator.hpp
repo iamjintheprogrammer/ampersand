@@ -13,7 +13,8 @@ namespace ampersand::meta {
 
 	public:
 		using verb = Verb;
-		template <std::size_t Idx> constexpr auto get_operand();
+		template <std::size_t Idx, typename... T>
+		friend constexpr auto& get_operand(meta_operator<T...>&);
 		constexpr meta_operator(verb, Operand... pOperand) : _M_Base(pOperand...) {} // For CTAD Support
 		constexpr meta_operator		 (Operand... pOperand) : _M_Base(pOperand...) {}
 
@@ -24,12 +25,9 @@ namespace ampersand::meta {
 	meta_operator(Verb, Operand&&...)
 		-> meta_operator<Verb, std::remove_reference_t<Operand>...>;
 
-	template <typename Verb, typename... Operand>
-	template <std::size_t Idx>
-	constexpr auto
-		meta_operator<Verb, Operand...>::get_operand() {
-			return
-				std::get<Idx>(_M_Base);
+	template <std::size_t Idx, typename... T>
+	constexpr auto& get_operand(meta_operator<T...>& pMeta) {
+		return std::get<Idx>(pMeta._M_Base);
 	}
 }
 

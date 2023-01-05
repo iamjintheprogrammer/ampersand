@@ -16,10 +16,16 @@ add_library(ampersand.diopter STATIC
             object.hpp
             object.cpp
             syntax.hpp
+            syntax_impl.hpp
             syntax.cpp
+            syntax_impl.cpp
             stack.hpp
             stack.cpp
             scope.hpp
-            scope.cpp)
+            scope.cpp
+            operation.hpp
+            operation.cpp
+            operation_impl.hpp
+            operation_impl.cpp)
 
 set_target_properties(ampersand.diopter PROPERTIES LINKER_LANGUAGE CXX)
