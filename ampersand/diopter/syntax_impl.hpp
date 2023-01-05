@@ -2,30 +2,22 @@
 #include <vector>
 #include <memory>
 
-#include <ampersand/diopter/operation.hpp>
+#include <ampersand/diopter/operand.hpp>
 
 namespace ampersand::diopter  {
 
 	class syntax_impl {
+		friend class syntax;
 		using		name_type_impl = operand_dynamic_impl::name_type;
 		struct syntax_operand_impl {
-			struct		   none_impl {};
 			enum class category_impl { syntax, operand, none };
+			category_impl				 _M_Impl_Category;
+			std::shared_ptr<syntax_impl> _M_Impl_Syntax  ;
+			operand						 _M_Impl_Operand ;
 
-			union syntax_operand_union_impl {
-				std::unique_ptr<syntax_impl> u_syntax ;
-				operand						 u_operand;
-				none_impl					 u_none   ;
 
-				 syntax_operand_union_impl(meta::concepts::meta_operator auto&);
-				 syntax_operand_union_impl(name_type_impl		   , name_type_impl);
-				 syntax_operand_union_impl(meta::primitive_category, name_type_impl);
-				 syntax_operand_union_impl(std::integral	   auto pValue) : u_operand(pValue) {}
-				 syntax_operand_union_impl(std::floating_point auto pValue) : u_operand(pValue) {}
-				~syntax_operand_union_impl();
-			}			  _M_Impl;
-			category_impl _M_Impl_Category;
-
+			 syntax_operand_impl();
+			 syntax_operand_impl(const syntax_operand_impl&);
 			 syntax_operand_impl(meta::concepts::meta_operator auto&);
 			 syntax_operand_impl(name_type_impl			 , name_type_impl);
 			 syntax_operand_impl(meta::primitive_category, name_type_impl);
@@ -38,7 +30,7 @@ namespace ampersand::diopter  {
 		meta::verb						 _M_Impl_Verb   ;
 
 		template <typename... T>
-		void _M_Impl_Init(meta::meta_object<T...>&);
+		void _M_Impl_Init(meta::basic_meta_object<T...>&);
 		void _M_Impl_Init(std::integral		  auto);
 		void _M_Impl_Init(std::floating_point auto);
 		void _M_Impl_Init(meta::concepts::meta_operator auto&);
@@ -48,28 +40,28 @@ namespace ampersand::diopter  {
 		void _M_Impl_Init(meta::meta_operator<V, T...>&);
 
 	public:
-		using name_type = name_type_impl;
-		using category  = syntax_operand_impl::category_impl;
+		using name_type		  = name_type_impl;
+		using size_type		  = std::size_t;
+		using difference_type = std::ptrdiff_t;
+		using category		  = syntax_operand_impl::category_impl;
 
 		template <typename V, typename... T>
 		syntax_impl(meta::meta_operator<V, T...>&);
 
-		
+		syntax_operand_impl* operator[]	 (size_type);
+		size_type			 operand_count();
+		meta::verb			 get_verb	  ();
 	};
-
-	syntax_impl::syntax_operand_impl::syntax_operand_union_impl::syntax_operand_union_impl
-		(meta::concepts::meta_operator auto& pOperator)
-			: u_syntax(new syntax_impl(pOperator)) {}
 
 	syntax_impl::syntax_operand_impl::syntax_operand_impl
 		(meta::concepts::meta_operator auto& pOperator)
-			: _M_Impl		  (pOperator),
+			: _M_Impl_Syntax  (std::make_shared<syntax_impl>(pOperator)),
 			  _M_Impl_Category(category::syntax) {}
 
 	template <typename... T>
 	void
 		syntax_impl::_M_Impl_Init
-			(meta::meta_object<T...>& pMetaType) {
+			(meta::basic_meta_object<T...>& pMetaType) {
 		_M_Impl_Operand.emplace_back
 			(pMetaType.type_of().type_id(), pMetaType.name());
 	}
@@ -108,17 +100,18 @@ namespace ampersand::diopter  {
 
 	syntax_impl::syntax_operand_impl::syntax_operand_impl
 		(std::integral auto pValue)
-			: _M_Impl		  (pValue),
+			: _M_Impl_Operand (pValue),
 			  _M_Impl_Category(category::operand) {}
 
 	syntax_impl::syntax_operand_impl::syntax_operand_impl
 		(std::floating_point auto pValue)
-			: _M_Impl		  (pValue),
+			: _M_Impl_Operand (pValue),
 			  _M_Impl_Category(category::operand) {}
 
 	template <typename V, typename... T>
 	syntax_impl::syntax_impl
-		(meta::meta_operator<V, T...>& pMeta) {
+		(meta::meta_operator<V, T...>& pMeta)
+			: _M_Impl_Verb(meta::meta_operator<V, T...>::verb::verb_category){
 			_M_Impl_Init(pMeta, std::make_index_sequence<sizeof...(T)>{});
 	}
 

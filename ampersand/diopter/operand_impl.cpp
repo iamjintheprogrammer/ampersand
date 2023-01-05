@@ -1,4 +1,4 @@
-#include "operation_impl.hpp"
+#include "operand_impl.hpp"
 
 namespace ampersand::diopter {
 	operand_dynamic_impl::operand_dynamic_impl
@@ -106,21 +106,29 @@ namespace ampersand::diopter {
 		return true;
 	}
 
-	operand_impl::operand_union_impl::operand_union_impl
-		(operand_dynamic_impl::name_type pType, operand_dynamic_impl::name_type pName)
-			: u_dynamic(pType, pName) {}
-
-	operand_impl::operand_union_impl::operand_union_impl
-		(meta::primitive_category pType, operand_dynamic_impl::name_type pName)
-			: u_dynamic(pType, pName) {}
-
-	operand_impl::operand_union_impl::~operand_union_impl() {}
-
 	operand_impl::operand_impl(name_type pType, name_type pName)
-		: _M_Impl_Union(pType, pName) {}
+		: _M_Impl_Dynamic(pType, pName),
+		  _M_Impl_Type   (category::dynamic) {}
 
 	operand_impl::operand_impl(meta::primitive_category pType, name_type pName)
-		: _M_Impl_Union(pType, pName) {}
+		: _M_Impl_Dynamic(pType, pName),
+		  _M_Impl_Type (category::dynamic) {}
+
+	operand_impl::operand_impl()
+		: _M_Impl_Type (category::none) {}
+
+	operand_impl::operand_impl(const operand_impl& pCopy)
+		:  _M_Impl_Type (pCopy._M_Impl_Type) {
+		switch (_M_Impl_Type) {
+			case category::constant:
+				_M_Impl_Constant = pCopy._M_Impl_Constant;
+				break;
+			case category::dynamic: {
+				_M_Impl_Dynamic = pCopy._M_Impl_Dynamic;
+				break;
+			}
+		}
+	}
 
 	operand_impl::category operand_impl::get_category() { 
 		return _M_Impl_Type;
@@ -131,7 +139,7 @@ namespace ampersand::diopter {
 			return name_type{ };
 		else
 			return
-				_M_Impl_Union.u_dynamic.type_name();
+				_M_Impl_Dynamic.type_name();
 	}
 
 	operand_impl::name_type	operand_impl::name() {
@@ -139,10 +147,25 @@ namespace ampersand::diopter {
 			return name_type{ };
 		else
 			return
-				_M_Impl_Union.u_dynamic.name();
+				_M_Impl_Dynamic.name();
 	}
 
 	operand_impl::operator bool() {
 		return _M_Impl_Type != operand_type_impl::none;
+	}
+
+	operand_impl&
+		operand_impl::operator=(const operand_impl& pCopy) {
+			_M_Impl_Type  = pCopy._M_Impl_Type;
+			switch (_M_Impl_Type) {
+			case category::constant:
+				_M_Impl_Constant = pCopy._M_Impl_Constant;
+				break;
+			case category::dynamic: {
+				_M_Impl_Dynamic = pCopy._M_Impl_Dynamic;
+				break;
+			}
+			}
+			return *this;
 	}
 }

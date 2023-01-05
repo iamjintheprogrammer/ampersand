@@ -13,6 +13,7 @@ namespace ampersand::diopter {
 		using name_type = name_type_impl;
 		operand_dynamic_impl(name_type, name_type);
 		operand_dynamic_impl(meta::primitive_category, name_type);
+		operand_dynamic_impl() = default;
 		
 		bool					 primitive		   ();
 		meta::primitive_category primitive_category();
@@ -35,7 +36,9 @@ namespace ampersand::diopter {
 			i16, u16,
 			i32, u32,
 			i64, u64,
-			f32, f64
+			f32, f64,
+
+			any
 		};
 
 		constant_type_impl _M_Impl_Type;
@@ -44,6 +47,7 @@ namespace ampersand::diopter {
 
 		template <std::floating_point T> operand_constant_impl(T);
 		template <std::integral T>		 operand_constant_impl(T);
+										 operand_constant_impl( ) = default;
 
 		constant_type get_type_of();
 
@@ -65,24 +69,16 @@ namespace ampersand::diopter {
 
 	class operand_impl {
 		enum class operand_type_impl  { constant, dynamic, none };
-		struct	   operand_none_impl  {};
-		union	   operand_union_impl {
-			template <std::floating_point T> operand_union_impl(T);
-			template <std::integral T>		 operand_union_impl(T);
-											 operand_union_impl(operand_dynamic_impl::name_type, operand_dynamic_impl::name_type);
-											 operand_union_impl(meta::primitive_category       , operand_dynamic_impl::name_type);
-											~operand_union_impl();
-			
-			operand_constant_impl u_constant;
-			operand_dynamic_impl  u_dynamic ;
-		}				  _M_Impl_Union;
-		operand_type_impl _M_Impl_Type ;
 
-		operand_impl();
+		operand_type_impl	  _M_Impl_Type	  ;
+		operand_constant_impl _M_Impl_Constant;
+		operand_dynamic_impl  _M_Impl_Dynamic ;
+				
 	public:
 		using name_type = operand_dynamic_impl::name_type;
 		using category  = operand_type_impl;
-
+										 operand_impl();
+										 operand_impl(const operand_impl&);
 										 operand_impl(name_type				  , name_type);
 										 operand_impl(meta::primitive_category, name_type);
 		template <std::floating_point T> operand_impl(T);
@@ -94,7 +90,8 @@ namespace ampersand::diopter {
 		category  get_category();
 		name_type type_name   ();
 		name_type	   name   ();
-			  operator bool   ();
+					  operator bool();
+		operand_impl& operator=	   (const operand_impl&);
 	};
 
 	template <std::floating_point T>
@@ -148,16 +145,13 @@ namespace ampersand::diopter {
 	}
 
 	template <std::floating_point T>
-	operand_impl::operand_union_impl::operand_union_impl(T pValue)
-		: u_constant(pValue) {}
+	operand_impl::operand_impl(T pValue)
+		: _M_Impl_Constant(pValue),
+		  _M_Impl_Type    (category::constant) {}
 	template <std::integral T>
-	operand_impl::operand_union_impl::operand_union_impl(T pValue)
-		: u_constant(pValue) {}
-
-	template <std::floating_point T>
-	operand_impl::operand_impl(T pValue) : _M_Impl_Union(pValue) {}
-	template <std::integral T>
-	operand_impl::operand_impl(T pValue) : _M_Impl_Union(pValue) {}
+	operand_impl::operand_impl(T pValue) 
+		: _M_Impl_Constant(pValue),
+		  _M_Impl_Type    (category::constant) {}
 
 	template <std::floating_point T>
 	bool operand_impl::get_value(T& pValue) {
@@ -165,7 +159,7 @@ namespace ampersand::diopter {
 			return false;
 
 		return
-			_M_Impl_Union.u_constant.get_value(pValue);
+			_M_Impl_Constant.get_value(pValue);
 	}
 	template <std::integral T>
 	bool operand_impl::get_value(T& pValue) {
@@ -173,6 +167,6 @@ namespace ampersand::diopter {
 			return false;
 
 		return
-			_M_Impl_Union.u_constant.get_value(pValue);
+			_M_Impl_Constant.get_value(pValue);
 	}
 }

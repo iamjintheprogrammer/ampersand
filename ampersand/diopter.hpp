@@ -9,3 +9,4 @@
 #include <ampersand/diopter/type_impl.hpp>
 
 #include <ampersand/diopter/symbol.hpp>
+#include <ampersand/diopter/syntax.hpp>

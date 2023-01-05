@@ -23,9 +23,9 @@ add_library(ampersand.diopter STATIC
             stack.cpp
             scope.hpp
             scope.cpp
-            operation.hpp
-            operation.cpp
-            operation_impl.hpp
-            operation_impl.cpp)
+            operand.hpp
+            operand.cpp
+            operand_impl.hpp
+            operand_impl.cpp)
 
 set_target_properties(ampersand.diopter PROPERTIES LINKER_LANGUAGE CXX)
