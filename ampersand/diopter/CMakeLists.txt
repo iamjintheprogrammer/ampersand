@@ -7,6 +7,7 @@ add_library(ampersand.diopter STATIC
             loop.hpp
             condition.hpp
             script.hpp
+            script.cpp
             type.hpp
             type_impl.hpp
             type.cpp

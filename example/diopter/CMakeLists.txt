@@ -5,6 +5,8 @@ project(ampersand.example.diopter
 
 add_executable       (example.diopter.type   type.cpp)
 add_executable       (example.diopter.syntax syntax.cpp)
+add_executable       (example.diopter.script script.cpp)
 
 target_link_libraries(example.diopter.type   PRIVATE ampersand.diopter)
 target_link_libraries(example.diopter.syntax PRIVATE ampersand.diopter)
+target_link_libraries(example.diopter.script PRIVATE ampersand.diopter)

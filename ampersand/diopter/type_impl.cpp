@@ -29,9 +29,25 @@ namespace ampersand::diopter {
 			else										   return (*type_found).second;
 	}
 
+	type_impl::type_ptr
+		type_impl::get_inner_declaration(name_type pName) {
+			auto type_found = _M_Impl_Inner.find(pName);
+			if (type_found == _M_Impl_Inner.end()) return type_ptr(nullptr);
+			else								   return (*type_found).second;
+	}
+
+	type_impl::type_ptr
+		type_impl::super_declaration() {
+			return _M_Impl_Super;
+	}
+
 	bool
 		type_impl::primitive()
 			{ return _M_Impl_Primitive; }
+
+	bool
+		type_impl::inner_declaration()
+			{ return _M_Impl_Super != nullptr; }
 
 	type_impl::name_type
 		type_impl::name() { return _M_Impl_TypeName; }

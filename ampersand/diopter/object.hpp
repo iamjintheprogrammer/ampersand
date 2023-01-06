@@ -8,6 +8,7 @@ namespace ampersand::diopter {
 		type::name_type _M_Name;
 	public:
 		using  name_type = type::name_type;
+		 dynamic_object_impl() = default;
 		 dynamic_object_impl(name_type, type&);
 		~dynamic_object_impl();
 
@@ -20,6 +21,7 @@ namespace ampersand::diopter {
 		type::name_type _M_Name;
 	public:
 		using  name_type = type::name_type;
+		 constant_object_impl() = default;
 		 constant_object_impl(name_type, type&);
 		~constant_object_impl();
 
@@ -32,17 +34,10 @@ namespace ampersand::diopter {
 		friend class scope;
 
 		enum class      category_impl { dynamic, constant, none };
-		struct     uninitialized_impl {};
 
-		union _M_Object_Impl {
-			uninitialized_impl	 u_uninit  ;
-			constant_object_impl u_constant;
-			dynamic_object_impl  u_dynamic ;
-			
-			 _M_Object_Impl();
-			~_M_Object_Impl();
-		}			  _M_Impl_Union;
-		category_impl _M_Impl_Category;
+		constant_object_impl _M_Impl_Constant;
+		dynamic_object_impl  _M_Impl_Dynamic ;
+		category_impl		 _M_Impl_Category;
 
 		object();
 	public:

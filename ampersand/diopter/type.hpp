@@ -10,6 +10,9 @@ namespace ampersand::diopter {
 		friend class scope ;
 		friend class object;
 
+		friend class dynamic_object_impl ;
+		friend class constant_object_impl;
+
 		type_impl::type_ptr _M_Impl;
 
 		type(type_impl::type_ptr);
@@ -22,11 +25,17 @@ namespace ampersand::diopter {
 								 type(meta::concepts::primitive auto&);
 
 	public:
-		name_type name		   ();
-		bool	  link_type    (name_type, type&);
-		bool	  primitive	   ();
-		type	  operator[]   (name_type);
-				  operator bool();
+		name_type name				   ();
+		bool	  link_type			   (name_type, type&);
+		
+		bool	  primitive			   ();
+		bool	  inner_declaration	   ();
+
+		type	  operator[]		   (name_type);
+		type	  get_inner_declaration(name_type);
+		type		  super_declaration(name_type);
+
+				  operator bool	  	   ();
 	};
 
 	template <typename... T>

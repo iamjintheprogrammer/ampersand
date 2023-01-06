@@ -36,6 +36,23 @@ namespace ampersand::diopter {
 				return type(_M_Impl->operator[](pName));
 	}
 
+	bool
+		type::inner_declaration() {
+			return _M_Impl->inner_declaration();
+	}
+
+	type
+		type::super_declaration(name_type pName) {
+			return type(_M_Impl->super_declaration());
+	}
+
+	type
+		type::get_inner_declaration(name_type pName) {
+			if(!_M_Impl)
+				return type();
+				return type(_M_Impl->get_inner_declaration(pName));
+	}
+
 	type::operator bool() {
 		return _M_Impl.operator bool();
 	}

@@ -8,15 +8,18 @@ namespace ampersand::diopter {
 	class type_impl {
 		using __table = std::unordered_map<std::string, std::shared_ptr<type_impl>>;
 		union type_union_impl {
-			  __table				   u_table    ;
-			  meta::primitive_category u_primitive;
+			  __table				   u_table    ; // Enabled If this type is Compound Type.
+			  meta::primitive_category u_primitive; // Enabled If this type is Primitive Type.
 
 			   type_union_impl();
 			   type_union_impl(meta::primitive_category);
 			  ~type_union_impl();
-		}			_M_Impl_Union    ;
-		bool		_M_Impl_Primitive;
-		std::string _M_Impl_TypeName;
+		}			_M_Impl_Union      ;
+		bool		_M_Impl_Primitive  ;
+		std::string _M_Impl_TypeName   ;
+
+		__table					   _M_Impl_Inner;
+		std::shared_ptr<type_impl> _M_Impl_Super;
 
 		template <std::size_t Idx,    typename... T> void _M_Impl_Init(meta::meta_type<T...>&);
 		template <std::size_t... Idx, typename... T> void _M_Impl_Init(meta::meta_type<T...>&, std::index_sequence<Idx...>);
@@ -32,8 +35,13 @@ namespace ampersand::diopter {
 	public:
 		name_type name		();
 		bool	  link_type (name_type, type_ptr);
-		bool	  primitive ();
-		type_ptr  operator[](name_type);
+		
+		bool	  primitive		   ();
+		bool	  inner_declaration(); // Returns True if the type is Inner Declaration (Nested Class)
+		
+		type_ptr  operator[]		   (name_type);
+		type_ptr  get_inner_declaration(name_type);
+		type_ptr	  super_declaration();
 	};
 
 	template <std::size_t Idx, typename... T>
