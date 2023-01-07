@@ -5,6 +5,9 @@ add_library(ampersand.meta STATIC
             ../meta.hpp
             meta.hpp
             meta_object.hpp
+            meta_script.hpp
+            meta_function.hpp
+            meta_impl.hpp
             attribute.hpp
             annotation.hpp
             operator.hpp

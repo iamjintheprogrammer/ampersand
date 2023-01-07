@@ -6,9 +6,5 @@
 #include <ampersand/meta/verb.hpp>
 
 #include <ampersand/meta/meta.hpp>
-#include <ampersand/meta/body_traits.hpp>
-
-namespace ampersand::meta {
-	template <typename MetaType>
-	using meta_object = basic_meta_object<MetaType, body_traits<MetaType>>;
-}
+#include <ampersand/meta/meta_function.hpp>
+#include <ampersand/meta/meta_impl.hpp>

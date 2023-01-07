@@ -2,6 +2,24 @@
 #include <ampersand/meta.hpp>
 
 namespace ampersand::diopter {
+	class operand_declare_impl {
+		using		  name_type_impl = std::string;
+		enum class declare_type_impl { type, primitive_type, object };
+		declare_type_impl		 _M_Impl_Declare_Type  ;
+		meta::primitive_category _M_Impl_Primitive_Type;
+		name_type_impl			 _M_Impl_Type,
+								 _M_Impl_Name;
+		
+		void _M_Init_Impl(meta::primitive_category, name_type_impl);
+		void _M_Init_Impl(name_type_impl		  , name_type_impl);
+		void _M_Init_Impl(name_type_impl);
+	public:
+		operand_declare_impl(meta::concepts::meta_object auto&);
+		operand_declare_impl(meta::concepts::meta_type   auto&);
+
+		
+	};
+
 	class operand_dynamic_impl {
 		using name_type_impl = std::string;
 		name_type_impl _M_Impl_Type,
@@ -68,31 +86,44 @@ namespace ampersand::diopter {
 	};
 
 	class operand_impl {
-		enum class operand_type_impl  { constant, dynamic, none };
+		enum class operand_category_impl  { constant, dynamic, declare, none };
 
-		operand_type_impl	  _M_Impl_Type	  ;
+		operand_category_impl _M_Impl_Type	  ;
 		operand_constant_impl _M_Impl_Constant;
 		operand_dynamic_impl  _M_Impl_Dynamic ;
+		operand_declare_impl  _M_Impl_Declare ;
 				
 	public:
 		using name_type = operand_dynamic_impl::name_type;
-		using category  = operand_type_impl;
+		using category  = operand_category_impl;
 										 operand_impl();
 										 operand_impl(const operand_impl&);
 										 operand_impl(name_type				  , name_type);
 										 operand_impl(meta::primitive_category, name_type);
+										 operand_impl(meta::concepts::meta_object auto&);
+										 operand_impl(meta::concepts::meta_type   auto&);
 		template <std::floating_point T> operand_impl(T);
 		template <std::integral T>		 operand_impl(T);
 
-		template <std::floating_point T> bool get_value(T&);
-		template <std::integral T>		 bool get_value(T&);
+		template <std::floating_point T> bool get_value(T&); // Only valid if _M_Impl_Type is category::constant
+		template <std::integral T>		 bool get_value(T&); // Only valid if _M_Impl_Type is category::constant
 
 		category  get_category();
-		name_type type_name   ();
-		name_type	   name   ();
+		name_type type_name   (); // Only valid if _M_Impl_Type is category::dynamic or category::declare
+		name_type	   name   (); // Only valid if _M_Impl_Type is category::dynamic or category::declare
 					  operator bool();
 		operand_impl& operator=	   (const operand_impl&);
 	};
+
+	operand_declare_impl::operand_declare_impl
+		(meta::concepts::meta_object auto& pMetaObject) {
+		_M_Init_Impl(pMetaObject.type_of().type_id(), pMetaObject.name());
+	}
+
+	operand_declare_impl::operand_declare_impl
+		(meta::concepts::meta_type auto& pMetaType) {
+			_M_Init_Impl(pMetaType.type_id());
+	}
 
 	template <std::floating_point T>
 	operand_constant_impl::operand_constant_impl(T pValue) {
@@ -152,6 +183,12 @@ namespace ampersand::diopter {
 	operand_impl::operand_impl(T pValue) 
 		: _M_Impl_Constant(pValue),
 		  _M_Impl_Type    (category::constant) {}
+
+	operand_impl::operand_impl
+		(meta::concepts::meta_object auto& pMetaObject)
+			: _M_Impl_Declare(pMetaObject),
+			  _M_Impl_Type   (category::declare) {}
+	operand_impl::operand_impl(meta::concepts::meta_type   auto&);
 
 	template <std::floating_point T>
 	bool operand_impl::get_value(T& pValue) {

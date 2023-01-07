@@ -20,135 +20,29 @@ namespace ampersand::meta {
 		static void construct(body_type&, const char*) {  }
 		static void destruct (body_type&)			   {  }
 
-		template <typename RhsObject>
-		static auto
-			equal
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::equal{}, pLhs, pRhs };
-		}
+		template <typename RhsObject> static auto equal    (meta_object_type&, RhsObject&&);
+		template <typename RhsObject> static auto not_equal(meta_object_type&, RhsObject&&);
 
-		template <typename RhsObject>
-		static auto
-			not_equal
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::not_equal{}, pLhs, pRhs };
-		}
+		template <typename RhsObject> static auto greater_than	  (meta_object_type&, RhsObject&&);
+		template <typename RhsObject> static auto greater_or_equal(meta_object_type&, RhsObject&&);
 
-		template <typename RhsObject>
-		static auto
-			greater_than
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::greater_than{}, pLhs, pRhs };
-		}
+		template <typename RhsObject> static auto less_than    (meta_object_type&, RhsObject&&);
+		template <typename RhsObject> static auto less_or_equal(meta_object_type&, RhsObject&&);
 
-		template <typename RhsObject>
-		static auto
-			greater_or_equal
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::greater_or_equal{}, pLhs, pRhs };
-		}
+		template <typename RhsObject> static auto add			(meta_object_type&, RhsObject&&);
+		template <typename RhsObject> static auto add_and_store (meta_object_type&, RhsObject&&);
 
-		template <typename RhsObject>
-		static auto
-			less_than
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::less_than{}, pLhs, pRhs };
-		}
+		template <typename RhsObject> static auto subtract			(meta_object_type&, RhsObject&&);
+		template <typename RhsObject> static auto subtract_and_store(meta_object_type&, RhsObject&&);
 
-		template <typename RhsObject>
-		static auto
-			less_or_equal
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::less_or_equal{}, pLhs, pRhs };
-		}
+		template <typename RhsObject> static auto multiply			(meta_object_type&, RhsObject&&);
+		template <typename RhsObject> static auto multiply_and_store(meta_object_type&, RhsObject&&);
 
-		template <typename RhsObject>
-		static auto
-			add
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::add{}, pLhs, pRhs };
-		}
+		template <typename RhsObject> static auto divide		  (meta_object_type&, RhsObject&&);
+		template <typename RhsObject> static auto divide_and_store(meta_object_type&, RhsObject&&);
 
-		template <typename RhsObject>
-		static auto
-			add_and_store
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::add_and_store{}, pLhs, pRhs };
-		}
-
-		template <typename RhsObject>
-		static auto
-			subtract
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::subtract{}, pLhs, pRhs };
-		}
-
-		template <typename RhsObject>
-		static auto
-			subtract_and_store
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::subtract_and_store{}, pLhs, pRhs };
-		}
-
-		template <typename RhsObject>
-		static auto
-			multiply
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::multiply{}, pLhs, pRhs };
-		}
-
-		template <typename RhsObject>
-		static auto
-			multiply_and_store
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::multiply_and_store{}, pLhs, pRhs };
-		}
-
-		template <typename RhsObject>
-		static auto
-			divide
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::divide{}, pLhs, pRhs };
-		}
-
-		template <typename RhsObject>
-		static auto
-			divide_and_store
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator{ meta::divide_and_store{}, pLhs, pRhs };
-		}
-
-		template <typename RhsObject>
-		static auto
-			move
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator
-					{ meta::move{}, pLhs, pRhs };
-		}
-		
-		template <typename RhsObject>
-		static auto
-			copy
-				(meta_object_type& pLhs, RhsObject&& pRhs) {
-			return
-				meta_operator
-					{ meta::copy{}, pLhs, pRhs };
-		}
+		template <typename RhsObject> static auto move(meta_object_type&, RhsObject&&);
+		template <typename RhsObject> static auto copy(meta_object_type&, RhsObject&&);
 	};
 
 	template <typename... Attributes>
@@ -175,5 +69,151 @@ namespace ampersand::meta {
 			*reinterpret_cast
 				<meta_type<Attributes...>::pointer>
 					(pBody);
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::equal
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::equal{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::not_equal
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::not_equal{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::greater_than
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::greater_than{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::greater_or_equal
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::greater_or_equal{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::less_than
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::less_than{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::less_or_equal
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::less_or_equal{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::add
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::add{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::add_and_store
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::add_and_store{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::subtract
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::subtract{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::subtract_and_store
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::subtract_and_store{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::multiply
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::multiply{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::multiply_and_store
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::multiply_and_store{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::divide
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::divide{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::divide_and_store
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator{ meta::divide_and_store{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::move
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator
+		{ meta::move{}, pLhs, pRhs };
+	}
+
+	template <typename... Attributes>
+	template <typename RhsObject>
+	auto
+		body_traits<meta_type<Attributes...>>::copy
+			(meta_object_type& pLhs, RhsObject&& pRhs) {
+		return
+			meta_operator
+		{ meta::copy{}, pLhs, pRhs };
 	}
 }

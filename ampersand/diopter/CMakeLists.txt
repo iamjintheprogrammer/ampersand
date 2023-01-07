@@ -6,12 +6,14 @@ add_library(ampersand.diopter STATIC
             loop_header.hpp
             loop.hpp
             condition.hpp
-            script.hpp
-            script.cpp
+            function.hpp
+            function.cpp
             type.hpp
             type_impl.hpp
             type.cpp
             type_impl.cpp
+            impl.hpp
+            impl.cpp
             symbol.hpp
             symbol.cpp
             object.hpp

@@ -32,6 +32,7 @@ namespace ampersand::diopter {
 	class object {
 		friend class stack;
 		friend class scope;
+		friend class function;
 
 		enum class      category_impl { dynamic, constant, none };
 

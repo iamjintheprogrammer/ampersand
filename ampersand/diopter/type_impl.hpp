@@ -7,20 +7,18 @@
 namespace ampersand::diopter {
 	class type_impl {
 		using __table = std::unordered_map<std::string, std::shared_ptr<type_impl>>;
-		union type_union_impl {
-			  __table				   u_table    ; // Enabled If this type is Compound Type.
-			  meta::primitive_category u_primitive; // Enabled If this type is Primitive Type.
+		__table				       _M_Impl_Complex		   ; // Enabled If this type is Compound Type.
+		std::string				   _M_Impl_Complex_TypeName; // Type name of Complex Type.
+		__table					   _M_Impl_Complex_Inner   ; // Inner Type Declaration of Complex Type.
+		std::shared_ptr<type_impl> _M_Impl_Complex_Super   ; // Super Type Declaration of Complex Type.
+		
+		meta::primitive_category _M_Impl_Primitive_Category; // Enabled If this type is Primitive Type.
+		bool					 _M_Impl_Primitive;
 
-			   type_union_impl();
-			   type_union_impl(meta::primitive_category);
-			  ~type_union_impl();
-		}			_M_Impl_Union      ;
-		bool		_M_Impl_Primitive  ;
-		std::string _M_Impl_TypeName   ;
-
-		__table					   _M_Impl_Inner;
-		std::shared_ptr<type_impl> _M_Impl_Super;
-
+		
+													 void _M_Impl_Init(meta::concepts::attribute		   auto&);
+													 void _M_Impl_Init(meta::concepts::primitive_attribute auto&);
+													 void _M_Impl_Init(meta::concepts::meta_type		   auto&);
 		template <std::size_t Idx,    typename... T> void _M_Impl_Init(meta::meta_type<T...>&);
 		template <std::size_t... Idx, typename... T> void _M_Impl_Init(meta::meta_type<T...>&, std::index_sequence<Idx...>);
 	public:
@@ -44,20 +42,32 @@ namespace ampersand::diopter {
 		type_ptr	  super_declaration();
 	};
 
+	void
+		type_impl::_M_Impl_Init
+			(meta::concepts::attribute auto& pAttr) {
+		_M_Impl_Complex.insert
+			(std::make_pair(pAttr.name(), type_ptr(nullptr)));
+	}
+
+	void
+		type_impl::_M_Impl_Init
+			(meta::concepts::primitive_attribute auto& pAttr) {
+		_M_Impl_Complex.insert
+			(std::make_pair(pAttr.name(), std::make_shared<type_impl>(pAttr.type())));
+	}
+	void 
+		type_impl::_M_Impl_Init
+			(meta::concepts::meta_type auto& pType) {
+		_M_Impl_Complex_Inner.insert
+			(pType.type_id(), std::make_shared<type_impl>(pType));
+	}
+
 	template <std::size_t Idx, typename... T>
 	void 
 		type_impl::_M_Impl_Init
 			(meta::meta_type<T...>& pMetaType) {
-		auto  attr      = meta::get_attribute<Idx>(pMetaType);
-		using attr_type = std::remove_reference_t<decltype(attr)>;
-
-		if constexpr
-			(meta::utility::is_primitive_attribute_v<attr_type>)
-				_M_Impl_Union.u_table.insert
-					(std::make_pair(attr.name(), std::make_shared<type_impl>(attr.type())));
-		else
-			_M_Impl_Union.u_table.insert
-				(std::make_pair(attr.name(), type_ptr(nullptr)));
+		auto  attr = meta::get_attribute<Idx>(pMetaType);
+		_M_Impl_Init(attr);
 	}
 	template <std::size_t... Idx, typename... T>
 	void

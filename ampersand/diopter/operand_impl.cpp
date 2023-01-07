@@ -1,6 +1,30 @@
 #include "operand_impl.hpp"
 
 namespace ampersand::diopter {
+	void
+		operand_declare_impl::_M_Init_Impl
+			(meta::primitive_category pCategory, name_type_impl pName) {
+		_M_Impl_Declare_Type   = declare_type_impl::primitive_type;
+		_M_Impl_Primitive_Type = pCategory;
+		_M_Impl_Name		   = pName;
+	}
+
+	void
+		operand_declare_impl::_M_Init_Impl
+			(name_type_impl pType, name_type_impl pName) {
+		_M_Impl_Declare_Type = declare_type_impl::object;
+		_M_Impl_Type		 = pType;
+		_M_Impl_Name		 = pName;
+	}
+
+	void
+		operand_declare_impl::_M_Init_Impl
+			(name_type_impl pName) {
+		_M_Impl_Declare_Type = declare_type_impl::type;
+		_M_Impl_Name		 = pName;
+	}
+
+
 	operand_dynamic_impl::operand_dynamic_impl
 		(name_type pType, name_type pName)
 			: _M_Impl_Type(pType),

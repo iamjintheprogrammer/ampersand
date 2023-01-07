@@ -4,6 +4,8 @@
 
 namespace ampersand::diopter {
 	class syntax {
+		friend class function;
+
 		syntax_impl* _M_Impl	 ;
 		bool		 _M_Impl_Root;
 		syntax(syntax_impl&);
