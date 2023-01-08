@@ -9,7 +9,7 @@ namespace ampersand::meta {
     template <typename... AnyType>
     class attribute;
 
-    template <concepts::meta_type MetaType, concepts::annotation... Annotation>
+    template <concepts::compound MetaType, concepts::annotation... Annotation>
     class attribute<MetaType, Annotation...> {
         using __string_view = std::string_view;
               __string_view _M_Name;
@@ -37,7 +37,7 @@ namespace ampersand::meta {
         AMPERSAND_ENABLE_META_OPERATOR
     };
 
-    template <concepts::meta_type MetaType>
+    template <concepts::compound MetaType>
     class attribute<MetaType> {
         using __string_view = std::string_view;
               __string_view _M_Name;
@@ -45,7 +45,7 @@ namespace ampersand::meta {
               __meta&       _M_Meta;
     public:
         using value_type = MetaType;
-        constexpr attribute(const char* pName, MetaType& pMetaType)
+        constexpr attribute(const char* pName, MetaType pMetaType)
             : _M_Name(pName),
               _M_Meta(pMetaType) {} // For CTAD Support
 
@@ -105,6 +105,17 @@ namespace ampersand::meta::utility {
     struct is_primitive_attribute<attribute<Type, Annotation...>> : std::true_type  {};
     template <typename... AnyType>
     inline constexpr bool is_primitive_attribute_v = is_primitive_attribute<AnyType...>::value;
+
+
+    template <typename AnyType>
+    struct is_compound_attribute : 
+        std::integral_constant
+            <
+                bool,
+                is_attribute_v<AnyType> && !is_primitive_attribute_v<AnyType>
+            > {};
+    template <typename... AnyType>
+    inline constexpr bool is_compound_attribute_v = is_compound_attribute<AnyType...>::value;
 }
 
 namespace ampersand::meta::concepts {
@@ -112,4 +123,6 @@ namespace ampersand::meta::concepts {
     concept           attribute = utility::is_attribute_v<AnyType...>;
     template <typename... AnyType>
     concept primitive_attribute = utility::is_primitive_attribute_v<AnyType...>;
+    template <typename... AnyType>
+    concept  compound_attribute = utility::is_compound_attribute_v <AnyType...>;
 }

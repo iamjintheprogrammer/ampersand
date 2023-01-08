@@ -7,6 +7,8 @@
 
 namespace ampersand::meta {
 	enum class verb {
+		no_operation,
+
 		add		,      add_and_store,
 		subtract, subtract_and_store,
 		multiply, multiply_and_store,

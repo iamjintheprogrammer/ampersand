@@ -31,23 +31,40 @@ void traverse_dfs(ampersand::diopter::syntax&& pSyntax) {
 	std::cout << "]\n";
 }
 
+
 int main() {
-	using namespace std::string_literals;
-	auto greater_than = object_1 < object_2 == object_1 = object_2;
-
-	ampersand::diopter::script meta_script{
-		type_1  ,
-		object_1,
-		object_2,
-
-		object_1 = object_2,
-		(object_1 <= object_2) = object_1
+	ampersand::diopter::scope scope;
+	ampersand::meta::meta_function meta_function {
+		"test_function_1",
+		ampersand::meta::meta_script {
+			type_1  ,
+			object_1,
+			object_2,
+			(object_1 = object_2),
+			((object_1 > object_2) = object_1)
+		}, ampersand::meta::meta_object<ampersand::meta::none>{},
+		   ampersand::meta::meta_object<ampersand::meta::none>{}
 	};
 
-	auto begin_line = meta_script.start_line();
-	auto end_line   = meta_script.end_line  ();
-
-	for (; begin_line != end_line; ++begin_line) {
-		traverse_dfs(std::move(*begin_line));
+	ampersand::meta::meta_function meta_function_2 {
+		"test_function_2",
+		ampersand::meta::meta_script {
+			type_1		   ,
+			meta_function(ampersand::meta::meta_object<ampersand::meta::none>{}),
+			object_1,
+			object_2,
+			(object_1 = object_2),
+			((object_1 > object_2) = object_1)
+		}, ampersand::meta::meta_object<ampersand::meta::none>{},
+		   ampersand::meta::meta_object<ampersand::meta::none>{}
+	};
+	
+	ampersand::diopter::function function(scope, meta_function_2);
+	for (std::size_t i = 0;
+					 i < function.get_syntax_count();
+					 i++) {
+		std::cout << "Line " << i << "\n";
+		traverse_dfs(function.get_syntax(i));
+		std::cout << "\n\n";
 	}
 }

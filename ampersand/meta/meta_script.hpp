@@ -65,12 +65,14 @@ namespace ampersand::meta {
 
 namespace ampersand::meta::utility {
 	template <typename T>
-	struct is_meta_script					 : std::false_type {};
+	struct is_meta_script							 : std::false_type {};
 	template <typename... T>
-	struct is_meta_script<meta_script<T...>> : std::true_type  {};
+	struct is_meta_script<meta_script<T...>>		 : std::true_type  {};
+	template <typename... T>
+	struct is_meta_script_element<meta_script<T...>> : std::true_type  {};
 
 	template <typename T>
-	inline constexpr bool is_meta_script_v = is_meta_script_element<T>::value;
+	inline constexpr bool is_meta_script_v = is_meta_script<T>::value;
 }
 
 namespace ampersand::meta::concepts {

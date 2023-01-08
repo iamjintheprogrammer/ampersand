@@ -1,46 +1,24 @@
 #pragma once
-#include <variant>
-
 #include <ampersand/meta.hpp>
-#include <ampersand/diopter/type_impl.hpp>
 
 namespace ampersand::diopter {
 	class type {
-		friend class symbol;
-		friend class scope ;
-		friend class object;
+		friend class compound;
+		friend class function;
 
-		friend class dynamic_object_impl ;
-		friend class constant_object_impl;
-
-		type_impl::type_ptr _M_Impl;
-
-		type(type_impl::type_ptr);
-		type();
-	public:
-		using name_type = type_impl::name_type;
-
-		template <typename... T> type(meta::meta_type<T...>&)		  ;
-								 type(meta::meta_type<>&)			  ;
-								 type(meta::concepts::primitive auto&);
-
-	public:
-		name_type name				   ();
-		bool	  link_type			   (name_type, type&);
+		enum class category_impl { compound, primitive, function, none };
+		using		   name_impl = std::string;
 		
-		bool	  primitive			   ();
-		bool	  inner_declaration	   ();
+			name_impl impl_type_name;
+		category_impl impl_type_category;
 
-		type	  operator[]		   (name_type);
-		type	  get_inner_declaration(name_type);
-		type		  super_declaration(name_type);
+		type(name_impl, category_impl);
+		type		   (category_impl);
+	public:
+		using name_type = name_impl	   ;
+		using category  = category_impl;
 
-				  operator bool	  	   ();
+		name_type type_name	   ();
+		category  type_category();
 	};
-
-	template <typename... T>
-	type::type(meta::meta_type<T...>& pInitType)
-		: _M_Impl(std::make_shared<type_impl>(pInitType)) { }
-	type::type(meta::concepts::primitive auto& pInitType)
-		: _M_Impl(std::make_shared<type_impl>(pInitType)) { }
 }

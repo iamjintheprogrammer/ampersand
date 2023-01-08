@@ -10,7 +10,7 @@ namespace ampersand::meta {
 
 	template 
 		<concepts::meta_type MetaType,
-			concepts::meta_function... Function>
+			concepts::meta_method... Function>
 	class meta_impl<MetaType, Function...> {
 		using		type_impl = MetaType;
 		using tuple_type_impl = std::tuple<Function...>;
@@ -31,7 +31,7 @@ namespace ampersand::meta {
 
 	template 
 		<concepts::meta_type MetaType,
-			concepts::meta_function... Function>
+			concepts::meta_method... Function>
 	meta_impl(MetaType, Function...)->meta_impl<MetaType, Function...>;
 
 	template <std::size_t Idx, typename... AnyType>
@@ -42,4 +42,18 @@ namespace ampersand::meta {
 			std::get<Idx>
 				(pMetaImpl._M_Impl_Function);
 	}
+}
+
+namespace ampersand::meta::utility {
+	template <typename AnyType>
+	struct is_meta_impl						   : std::false_type {};
+	template <typename... AnyType>
+	struct is_meta_impl<meta_impl<AnyType...>> : std::true_type  {};
+	template <typename AnyType>
+	inline constexpr bool is_meta_impl_v = is_meta_impl<AnyType>::value;
+}
+
+namespace ampersand::meta::concepts {
+	template <typename AnyType>
+	concept meta_impl = utility::is_meta_impl_v<AnyType>;
 }

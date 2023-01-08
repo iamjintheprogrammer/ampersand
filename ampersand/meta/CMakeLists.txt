@@ -10,10 +10,8 @@ add_library(ampersand.meta STATIC
             meta_impl.hpp
             attribute.hpp
             annotation.hpp
-            operator.hpp
             verb.hpp
-            body_traits.hpp
-            body_traits_impl.hpp
+            operator.hpp
             operator_impl.hpp)
 
 set_target_properties(ampersand.meta PROPERTIES LINKER_LANGUAGE CXX)

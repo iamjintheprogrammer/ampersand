@@ -30,10 +30,6 @@
         constexpr auto operator/  (RhsType&& pRhs) { return meta_operator{ divide{}    , *this, pRhs }; }\
         template <typename RhsType>\
         constexpr auto operator/= (RhsType&& pRhs) { return meta_operator{ divide_and_store{}, *this, pRhs }; }\
-        template <typename... RhsType>\
-        constexpr auto operator=  (meta_type<RhsType...>& pRhs)  { return meta_operator{ copy{}, *this, pRhs }; }\
-        template <typename... RhsType>\
-        constexpr auto operator=  (meta_type<RhsType...>&& pRhs) { return meta_operator{ move{}, *this, pRhs }; }
 
 #define AMPERSAND_DECLARE_META_OPERATOR \
 template <typename RhsType>\

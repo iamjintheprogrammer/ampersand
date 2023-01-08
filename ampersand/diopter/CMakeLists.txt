@@ -3,32 +3,13 @@ cmake_minimum_required(VERSION 3.12)
 project    (ampersand.diopter VERSION 0.1.0 LANGUAGES CXX)
 add_library(ampersand.diopter STATIC
             ../diopter.hpp
-            loop_header.hpp
-            loop.hpp
-            condition.hpp
-            function.hpp
-            function.cpp
             type.hpp
-            type_impl.hpp
+            type_compound.hpp
+            type_primitive.hpp
+            type_function.hpp
             type.cpp
-            type_impl.cpp
-            impl.hpp
-            impl.cpp
-            symbol.hpp
-            symbol.cpp
-            object.hpp
-            object.cpp
-            syntax.hpp
-            syntax_impl.hpp
-            syntax.cpp
-            syntax_impl.cpp
-            stack.hpp
-            stack.cpp
-            scope.hpp
-            scope.cpp
-            operand.hpp
-            operand.cpp
-            operand_impl.hpp
-            operand_impl.cpp)
+            type_compound.cpp
+            type_primitive.cpp
+            type_function.cpp)
 
 set_target_properties(ampersand.diopter PROPERTIES LINKER_LANGUAGE CXX)
