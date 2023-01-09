@@ -5,6 +5,7 @@ namespace ampersand::diopter {
 	class type {
 		friend class compound;
 		friend class function;
+		friend class symbol  ;
 
 		enum class category_impl { compound, primitive, function, none };
 		using		   name_impl = std::string;
@@ -12,9 +13,10 @@ namespace ampersand::diopter {
 			name_impl impl_type_name;
 		category_impl impl_type_category;
 
-		type(name_impl, category_impl);
-		type		   (category_impl);
+		 type(name_impl, category_impl);
+		 type		    (category_impl);
 	public:
+		~type();
 		using name_type = name_impl	   ;
 		using category  = category_impl;
 

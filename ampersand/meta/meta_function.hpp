@@ -135,7 +135,7 @@ namespace ampersand::meta {
 		<concepts::meta_object R,
 			concepts::meta_object... Arg ,
 				concepts::meta_script Script>
-	meta_function<R(Arg...), Script>::meta_function
+	constexpr meta_function<R(Arg...), Script>::meta_function
 		(const char* pName, script_type pScript, R pReturn, Arg... pArgs)
 			: _M_Impl_Type    (pName)  ,
 		      _M_Impl_Script  (pScript),
@@ -146,7 +146,7 @@ namespace ampersand::meta {
 		<concepts::meta_object R,
 			concepts::meta_object... Arg ,
 				concepts::meta_script Script>
-	meta_function<R(Arg...), Script>::meta_function
+	constexpr meta_function<R(Arg...), Script>::meta_function
 		(script_type pScript, R pReturn, Arg... pArgs)
 			: _M_Impl_Type    ()	   ,
 		      _M_Impl_Script  (pScript),
@@ -158,7 +158,7 @@ namespace ampersand::meta {
 			concepts::meta_object    R,
 			concepts::meta_object... Args,
 				concepts::meta_script Script>
-	meta_function<C, R(C, Args...), Script>::meta_function
+	constexpr meta_function<C, R(C, Args...), Script>::meta_function
 		(const char* pName  ,
 		 script_type pScript,
 		 R		     pReturn,
@@ -173,7 +173,7 @@ namespace ampersand::meta {
 			concepts::meta_object    R,
 			concepts::meta_object... Args,
 				concepts::meta_script Script>
-	meta_function<C, R(Args...), Script>::meta_function
+	constexpr meta_function<C, R(Args...), Script>::meta_function
 		(const char* pName  ,
 		 script_type pScript,
 		 class_type  pClass ,

@@ -1,92 +1,100 @@
 #pragma once
+#include <memory>
 #include <unordered_map>
+
 #include <ampersand/diopter/type.hpp>
 #include <ampersand/diopter/type_primitive.hpp>
 
 namespace ampersand::diopter {
 	class compound : public type {
-		using table_impl = std::unordered_map<name_impl, type*>;
+		friend class symbol;
+		using table_impl  = std::unordered_map<name_impl, std::shared_ptr<type>>;
 
-		type       impl_error		  { type::category::none };
-		table_impl impl_attribute	  ,
-				   impl_nested_declare;
+		type			  impl_error		 { type::category::none };
+		table_impl		  impl_attribute	 ,
+						  impl_nested_declare;
+		compound*		  impl_nested_super  ;
 
-		compound(meta::concepts::compound auto);
+		compound		   (meta::concepts::compound auto);
+		compound(compound&, meta::concepts::compound auto);
 													 void impl_do_init(meta::concepts::compound  auto); // Nested Declared
-													 void impl_do_init(meta::concepts::attribute auto);
+													 void impl_do_init(meta::concepts::compound_attribute  auto);
+													 void impl_do_init(meta::concepts::primitive_attribute auto);
 		template <std::size_t... Idx, typename... T> void impl_init   (meta::meta_type<T...>&, std::index_sequence<Idx...>);
 		template					 <typename... T> void impl_init   (meta::meta_type<T...>&);
+		
+		static std::shared_ptr<type> impl_find_type			   (compound&, name_type);
+		static std::shared_ptr<type> impl_find_type_from_super (compound&, name_type);
+		static std::shared_ptr<type> impl_find_type_from_nested(compound&, name_type);
+		static std::shared_ptr<type> impl_find_type_from_all   (compound&, name_type);
 	public:
 		using size_type = table_impl::size_type;
 		using name_type = table_impl::key_type ;
 
-		class attribute_iterator {
-			friend class compound;
-			using iter_impl = table_impl::iterator;
-			      compound& impl_compound;
-				  iter_impl impl_value_iterator;
-				  type		impl_value_error   { type::category::none };
+		class attribute;
+		class nested_declare;
 
-			attribute_iterator(compound&, iter_impl);
-		public:
-			type&				operator* ()   ;
-			attribute_iterator& operator++()   ;
-			attribute_iterator  operator++(int);
+		type& get_super();
 
-			bool				operator==(attribute_iterator&);
-			bool				operator!=(attribute_iterator&);
-		};
-
-		class nested_declare_iterator {
-			friend class compound;
-			using iter_impl = table_impl::iterator;
-				  compound& impl_compound;
-				  iter_impl impl_value_iterator;
-				  type		impl_value_error   { type::category::none };
-
-			nested_declare_iterator(compound&, iter_impl);
-		public:
-			type&					 operator* ()   ;
-			nested_declare_iterator& operator++()   ;
-			nested_declare_iterator  operator++(int);
-
-			bool				operator==(nested_declare_iterator&);
-			bool				operator!=(nested_declare_iterator&);
-		};
-
-		size_type		   attribute_count();
-		attribute_iterator begin_attribute();
-		attribute_iterator   end_attribute();
-		type&				find_attribute(name_type);
-
-		size_type				nested_declare_count();
-		nested_declare_iterator begin_nested_declare();
-		nested_declare_iterator   end_nested_declare();
-		type&				     find_nested_declare(name_type);
+	public:
+		static type& find_type	          (compound&, name_type);
+		static type& find_type_from_super (compound&, name_type);
+		static type& find_type_from_nested(compound&, name_type);
+		static type& find_type_from_all   (compound&, name_type);
 	};
 
 	compound::compound
 		(meta::concepts::compound auto pCompound)
-			: type(pCompound.type_id(), category_impl::compound) {}
+			: type			   (pCompound.type_id(), category_impl::compound),
+			  impl_nested_super(nullptr) {
+		impl_init(pCompound);
+	}
+
+	compound::compound
+		(compound& pSuper, meta::concepts::compound auto pCompound)
+			: type			   (pCompound.type_id(), category_impl::compound),
+			  impl_nested_super(pSuper) {
+		impl_init(pCompound);
+	}
 
 	void
 		compound::impl_do_init
 			(meta::concepts::compound auto pCompound) {
 		impl_nested_declare.insert
-			(std::make_pair(pCompound.type_id(), new compound(pCompound)));
+			(std::make_pair
+				(pCompound.type_id(),
+					std::shared_ptr<compound>(new compound(*this, pCompound))));
 	}
 
 	void
 		compound::impl_do_init
-			(meta::concepts::attribute auto pAttribute) {
-		if constexpr
-			(meta::utility::is_primitive_attribute_v<decltype(pAttribute)>)
-				impl_attribute.insert
-					(std::make_pair(pAttribute.name(), 
-						new primitive(pAttribute.type().type_id())));
-		else
+			(meta::concepts::compound_attribute auto pAttribute) {
+		type& type_from_current = compound::find_type(*this, pAttribute.type_of().type_id());
+		if (type_from_current.type_category() != type::category::none) {
 			impl_attribute.insert
-				(std::make_pair(pAttribute.name(), nullptr));
+				(std::make_pair(pAttribute.name(),
+					std::shared_ptr<type>(&type_from_current)));
+			return;
+		}
+
+		type& type_from_super = compound::find_type_from_super(*this, pAttribute.type_of().type_id());
+		if (type_from_super.type_category() != type::category::none) {
+			impl_attribute.insert
+				(std::make_pair(pAttribute.name(),
+					std::shared_ptr<type>(&type_from_current)));
+			return;
+		}
+
+		impl_attribute.insert
+			(std::make_pair(pAttribute.name(),
+				std::shared_ptr<type>(nullptr)));
+	}
+
+	void
+		compound::impl_do_init
+			(meta::concepts::primitive_attribute auto pAttribute) {
+		impl_attribute.insert
+			(std::make_pair(pAttribute.name(), std::shared_ptr<type>(new primitive(pAttribute.type().type_id()))));
 	}
 
 	template <std::size_t... Idx, typename... T>

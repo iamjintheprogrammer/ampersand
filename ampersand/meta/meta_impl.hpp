@@ -9,7 +9,7 @@ namespace ampersand::meta {
 	class meta_impl;
 
 	template 
-		<concepts::meta_type MetaType,
+		<concepts::compound MetaType,
 			concepts::meta_method... Function>
 	class meta_impl<MetaType, Function...> {
 		using		type_impl = MetaType;
@@ -30,7 +30,7 @@ namespace ampersand::meta {
 	};
 
 	template 
-		<concepts::meta_type MetaType,
+		<concepts::compound MetaType,
 			concepts::meta_method... Function>
 	meta_impl(MetaType, Function...)->meta_impl<MetaType, Function...>;
 

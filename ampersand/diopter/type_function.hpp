@@ -4,11 +4,16 @@
 
 namespace ampersand::diopter {
 	class function : public type {
+		friend class symbol;
 		enum class  function_category_impl { function, method, static_method };
-		using					 args_impl = std::unordered_map<type::name_type, type*>;
+		using					 args_impl = std::unordered_map<type::name_type, std::shared_ptr<type>>;
+
+		type	  impl_argument_error { type::category::none };
 		args_impl impl_argument;
-		type*	  impl_return  ,
-				  impl_class   ;
+		
+		std::pair<type::name_type, std::shared_ptr<type>>
+			impl_return,
+			impl_class ;
 
 		function(meta::concepts::function_type      auto&);
 		function(meta::concepts::method_type	    auto&);
@@ -29,32 +34,11 @@ namespace ampersand::diopter {
 		void impl_do_ret_init(meta::concepts::primitive auto&);
 
 	public:
-		class argument_iterator {
-			friend class function;
-			using iter_impl = args_impl::iterator;
-			
-			iter_impl impl_arg_iterator;
-			function& impl_function    ;
-			type      impl_arg_error   { type::category::none };
-
-			argument_iterator(function&, iter_impl);
-		public:
-			type&			   operator* ()   ;
-			argument_iterator& operator++()   ;
-			argument_iterator  operator++(int);
-
-			bool				operator==(argument_iterator&);
-			bool				operator!=(argument_iterator&);
-		};
+		class argument;
 
 		using size_type			= args_impl::size_type;
 		using name_type			= args_impl::key_type ;
 		using function_category = function_category_impl;
-		
-		argument_iterator begin_argument();
-		argument_iterator   end_argument();
-		argument_iterator  find_argument(name_type);
-		type&			     return_type();
 	};
 
 	function::function(meta::concepts::function_type      auto&);
@@ -114,25 +98,29 @@ namespace ampersand::diopter {
 		function::impl_do_arg_init
 			(meta::concepts::compound auto& pType) {
 		impl_argument.insert
-			(std::make_pair(pType.type_id(), nullptr));
+			(std::make_pair(pType.type_id(), std::shared_ptr<type>(nullptr)));
 	}
 
 	void
 		function::impl_do_arg_init
 			(meta::concepts::primitive auto& pType) {
 		impl_argument.insert
-			(std::make_pair(pType, primitive(pType)));
+			(std::make_pair(pType, std::shared_ptr<type>(new primitive(pType))));
 	}
 
 	void
 		function::impl_do_ret_init
 			(meta::concepts::compound auto& pType) {
-		impl_return = nullptr;
+		impl_return 
+			= std::make_pair
+				(pType.type_id(), std::shared_ptr<type>(nullptr));
 	}
 
 	void
 		function::impl_do_ret_init
 			(meta::concepts::primitive auto& pType) {
-		impl_return = new primitive(pType);
+		impl_return 
+			= std::make_pair
+					(std::shared_ptr<type>(new primitive(pType)));
 	}
 }

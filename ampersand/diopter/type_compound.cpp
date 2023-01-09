@@ -1,123 +1,113 @@
 #include "type_compound.hpp"
 
 namespace ampersand::diopter {
-	compound::attribute_iterator::attribute_iterator
-		(compound& pCompound, iter_impl pIter)
-			: impl_compound	     (pCompound),
-		      impl_value_iterator(pIter)    {  }
-
 	type&
-		compound::attribute_iterator::operator* () {
-			if(impl_value_iterator == impl_compound.impl_attribute.end())
-				return impl_value_error;
-			else
-				return *(*impl_value_iterator).second;
+		compound::get_super() {
+			return
+				(impl_nested_super)
+					? *impl_nested_super
+					:  impl_error;
 	}
 
-	compound::attribute_iterator&
-		compound::attribute_iterator::operator++() {
-			++impl_value_iterator;
-			return *this;
+	std::shared_ptr<type>
+		compound::impl_find_type
+			(compound& pCompound, name_type pTypename) {
+		auto sym_found = pCompound.impl_nested_declare.find(pTypename);
+		return
+			(sym_found == pCompound.impl_nested_declare.end())
+				? std::shared_ptr<type> { nullptr }
+				: (*sym_found).second;
 	}
 
-	compound::attribute_iterator
-		compound::attribute_iterator::operator++(int) {
-			++impl_value_iterator;
-			return *this;
+	std::shared_ptr<type>
+		compound::impl_find_type_from_super
+			(compound& pCompound, name_type pTypename) {
+		compound* type_seek = pCompound.impl_nested_super;
+		while(type_seek) {
+			auto sym_found = type_seek->impl_nested_declare.find(pTypename);
+			if (sym_found == type_seek->impl_nested_declare.end()) {
+				type_seek  = type_seek->impl_nested_super;
+				continue;
+			}
+
+			return (*sym_found).second;
+		}
+
+		return std::shared_ptr<type> { nullptr };
 	}
 
-	bool
-		compound::attribute_iterator::operator==
-			(attribute_iterator& pCopy) {
-		return impl_value_iterator == pCopy.impl_value_iterator;
+	std::shared_ptr<type>
+		compound::impl_find_type_from_nested
+			(compound& pCompound, name_type pTypename) {
+		for(auto it_nested  = pCompound.impl_nested_declare.begin();
+				 it_nested != pCompound.impl_nested_declare.end  ();
+			   ++it_nested) {
+			std::shared_ptr<type>& type_nested     = (*it_nested).second;
+			compound*			   type_nested_ptr = static_cast<compound*>(type_nested.get());
+			
+			if (type_nested_ptr->impl_nested_declare.empty()) {
+				if (type_nested_ptr->type_name() == pTypename)
+					return type_nested;
+			}
+			else {
+				auto type_ptr = impl_find_type_from_nested(*type_nested_ptr, pTypename);
+				if (type_ptr) return type_ptr;
+			}
+		}
+
+		return std::shared_ptr<type> { nullptr };
 	}
 
-	bool
-		compound::attribute_iterator::operator!=
-			(attribute_iterator& pCopy) {
-		return impl_value_iterator != pCopy.impl_value_iterator;
-	}
+	std::shared_ptr<type>
+		compound::impl_find_type_from_all
+			(compound& pCompound, name_type pTypename) {
+		std::shared_ptr<type> type_found;
+		
+		   type_found = compound::impl_find_type(pCompound, pTypename);
+		if(type_found) return type_found;
 
-	compound::nested_declare_iterator::nested_declare_iterator
-		(compound& pCompound, iter_impl pIter)
-			: impl_compound	     (pCompound),
-		      impl_value_iterator(pIter)    {  }
+			type_found = compound::impl_find_type_from_nested(pCompound, pTypename);
+		if (type_found) return type_found;
 
-	type&
-		compound::nested_declare_iterator::operator* () {
-			if(impl_value_iterator == impl_compound.impl_attribute.end())
-				return impl_value_error;
-			else
-				return *(*impl_value_iterator).second;
-	}
+			type_found = compound::impl_find_type_from_super(pCompound, pTypename);
+		if (type_found) return type_found;
 
-	compound::nested_declare_iterator&
-		compound::nested_declare_iterator::operator++() {
-			++impl_value_iterator;
-			return *this;
-	}
-
-	compound::nested_declare_iterator
-		compound::nested_declare_iterator::operator++(int) {
-			++impl_value_iterator;
-			return *this;
-	}
-
-	bool
-		compound::nested_declare_iterator::operator==
-			(nested_declare_iterator& pCopy) {
-		return impl_value_iterator == pCopy.impl_value_iterator;
-	}
-
-	bool
-		compound::nested_declare_iterator::operator!=
-			(nested_declare_iterator& pCopy) {
-		return impl_value_iterator != pCopy.impl_value_iterator;
-	}
-
-
-	compound::size_type
-		compound::attribute_count() {
-			return impl_attribute.size();
-	}
-
-	compound::attribute_iterator
-		compound::begin_attribute() {
-			return attribute_iterator(*this, impl_attribute.begin());
-	}
-
-	compound::attribute_iterator
-		compound::end_attribute() {
-			return attribute_iterator(*this, impl_attribute.end());
+		return std::shared_ptr<type> { nullptr };
 	}
 
 	type&
-		compound::find_attribute(name_type pName) {
-			auto fnd_attr = impl_attribute.find(pName);
-			if  (fnd_attr == impl_attribute.end())
-				return impl_error;
-			if (!(*fnd_attr).second)
-				return impl_error;
+		compound::find_type
+			(compound& pCompound, name_type pTypename) {
+		auto ptr_type = compound::impl_find_type(pCompound, pTypename);
 
-			return *(*fnd_attr).second;
-	}
-
-	compound::size_type
-		compound::nested_declare_count() {
-			return impl_nested_declare.size();
-	}
-
-	compound::nested_declare_iterator
-		compound::begin_nested_declare() {
-			return nested_declare_iterator(*this, impl_nested_declare.begin());
-	}
-
-	compound::nested_declare_iterator
-		compound::end_nested_declare() {
-			return nested_declare_iterator(*this, impl_nested_declare.end());
+		return
+			(ptr_type) ? *ptr_type : pCompound.impl_error;
 	}
 
 	type&
-		compound::find_nested_declare(name_type) {
+		compound::find_type_from_super
+			(compound& pCompound, name_type pTypename) {
+		auto ptr_type = compound::impl_find_type_from_super(pCompound, pTypename);
+
+		return
+			(ptr_type) ? *ptr_type : pCompound.impl_error;
+	}
+
+	type&
+		compound::find_type_from_nested
+			(compound& pCompound, name_type pTypename) {
+		auto ptr_type = compound::impl_find_type_from_nested(pCompound, pTypename);
+		
+		return
+			(ptr_type) ? *ptr_type : pCompound.impl_error;
+	}
+
+	type&
+		compound::find_type_from_all
+			(compound& pCompound, name_type pTypename) {
+		auto ptr_type = compound::impl_find_type_from_all(pCompound, pTypename);
+
+		return
+			(ptr_type) ? *ptr_type : pCompound.impl_error;
 	}
 }
