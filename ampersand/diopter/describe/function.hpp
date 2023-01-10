@@ -10,8 +10,17 @@
 #include <ampersand/diopter/type_function.hpp>
 #include <ampersand/diopter/type_function_argument.hpp>
 
-namespace ampersand::diopter {
+#include <ampersand/diopter/symbol.hpp>
+#include <ampersand/diopter/symbol_result.hpp>
+
+namespace ampersand::diopter::describe {
 	class function {
+		diopter::symbol impl_symbol;
+
+		function(diopter::symbol&, meta::concepts::meta_dynamic_method auto&);
+		function(diopter::symbol&, meta::concepts::meta_static_method  auto&);
+	public:
+		function(diopter::symbol&, meta::concepts::meta_function auto&);
 		
 	};
 }

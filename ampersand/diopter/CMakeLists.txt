@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.12)
 project    (ampersand.diopter VERSION 0.1.0 LANGUAGES CXX)
 add_library(ampersand.diopter STATIC
             ../diopter.hpp
-            function.hpp
-            function_method.hpp
-            function.cpp
-            function_method.cpp
+            describe/function.hpp
+            describe/function_method.hpp
+            describe/function.cpp
+            describe/function_method.cpp
             type.hpp
             type_compound.hpp
             type_compound_attr.hpp
@@ -28,6 +28,7 @@ add_library(ampersand.diopter STATIC
             syntax/syntax_element.hpp
             syntax/syntax_element_object.hpp
             syntax/syntax_element_constant.hpp
+            syntax/syntax_element_declare.hpp
             syntax/syntax.cpp
             syntax/syntax_element.cpp)
 

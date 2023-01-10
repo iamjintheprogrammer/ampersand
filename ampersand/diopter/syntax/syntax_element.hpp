@@ -7,7 +7,7 @@ namespace ampersand::diopter::syntax {
 		friend class constant;
 		friend class object  ;
 
-		enum class element_category_impl { object, constant, syntax, none };
+		enum class element_category_impl { object, object_declare, type_declare, constant, syntax, none };
 		element_category_impl impl_category;
 		element(element_category_impl);
 	public:
